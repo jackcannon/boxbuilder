@@ -25,6 +25,7 @@ export const FormInputSlider = <T extends unknown>({ propName, config, value, on
           }}
           aria-labelledby={`input-slider-${propName}`}
           step={config.step}
+          min={config.min ?? config.step ?? 0}
           max={config.max}
         />
       </Grid2>
