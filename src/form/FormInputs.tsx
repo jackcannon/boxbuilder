@@ -128,22 +128,3 @@ export const FormInput = <T extends unknown>(props: InputProps<T>) => {
     </Grid2>
   );
 };
-export const FormInput_OLD = <T extends unknown>(props: InputProps<T>) => {
-  const { propName, config, value, onChange } = props;
-
-  return (
-    <div>
-      <label>{config.displayName}</label>
-      <input
-        type="number"
-        value={value as any}
-        onChange={(e) => {
-          const value = parseFloat(e.target.value);
-          if (!isNaN(value)) {
-            onChange(value as T);
-          }
-        }}
-      />
-    </div>
-  );
-};
