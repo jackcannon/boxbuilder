@@ -18,7 +18,7 @@ const RangeNumberInput = <T extends ZodNumber>(props: { schema: T; value: number
   };
   return (
     <input
-      type={'range'}
+      type="range"
       value={props.value * scale}
       min={props.schema.minValue !== null ? props.schema.minValue * scale : undefined}
       max={props.schema.maxValue !== null ? props.schema.maxValue * scale : undefined}
@@ -43,7 +43,7 @@ const TextNumberInput = <T extends ZodNumber>(props: { schema: T; value: number;
   };
   return (
     <input
-      type={'number'}
+      type="number"
       value={props.value * scale}
       min={props.schema.minValue !== null ? props.schema.minValue * scale : undefined}
       max={props.schema.maxValue !== null ? props.schema.maxValue * scale : undefined}
@@ -53,7 +53,7 @@ const TextNumberInput = <T extends ZodNumber>(props: { schema: T; value: number;
 };
 
 const StringInput = <T extends ZodString>(props: { schema: T; value: string; name: string; onChange: (n: string) => void }) => {
-  return <input type={'text'} value={props.value} onChange={(e) => props.onChange(e.target.value)} />;
+  return <input type="text" value={props.value} onChange={(e) => props.onChange(e.target.value)} />;
 };
 
 const EnumInput = <T extends ZodEnum<any>>(props: { schema: T; onChange: (v: any) => void; name: string; value: any }) => {
@@ -102,7 +102,7 @@ const ArrayInput = <T extends ZodArray<any>>(props: { schema: T; onChange: (v: a
       })}
       <HBox>
         <input
-          type={'text'}
+          type="text"
           value={txt}
           onChange={(e) => setTxt(e.target.value)}
           onKeyDown={(e) => {
@@ -126,18 +126,18 @@ const ObjectInput = <T extends ZodObject<any>>(props: { schema: T; name: string;
       {Object.entries(props.schema.shape).map(([k, v]) => {
         if (v instanceof ZodNumber) {
           return (
-            <div className={'row'} key={k}>
+            <div className="row" key={k}>
               <label>{k}</label>
               <RangeNumberInput range={false} schema={v} name={k} value={props.object[k]} onChange={(v) => updateObjectProperty(k, v)} />
               <TextNumberInput range={false} schema={v} name={k} value={props.object[k]} onChange={(v) => updateObjectProperty(k, v)} />
-              {/*<label className={'value'}>{props.object[k]}</label>*/}
+              {/*<label className="value">{props.object[k]}</label>*/}
               <i>mm</i>
             </div>
           );
         }
         if (v instanceof ZodString) {
           return (
-            <div className={'row'} key={k}>
+            <div className="row" key={k}>
               <label>{k}</label>
               <StringInput schema={v as ZodString} name={k} value={props.object[k]} onChange={(v) => updateObjectProperty(k, v)} />
             </div>
@@ -145,7 +145,7 @@ const ObjectInput = <T extends ZodObject<any>>(props: { schema: T; name: string;
         }
         if (v instanceof ZodEnum) {
           return (
-            <div className={'row'} key={k}>
+            <div className="row" key={k}>
               <label>{k}</label>
               <EnumInput schema={v as ZodEnum<any>} name={k} value={props.object[k]} onChange={(v) => updateObjectProperty(k, v)} />
             </div>
@@ -153,7 +153,7 @@ const ObjectInput = <T extends ZodObject<any>>(props: { schema: T; name: string;
         }
         if (v instanceof ZodArray) {
           return (
-            <div className={'row'} key={k}>
+            <div className="row" key={k}>
               <label>{k}</label>
               <ArrayInput schema={v as ZodArray<any>} name={k} value={props.object[k] as any[]} onChange={(v) => updateObjectProperty(k, v)} />
             </div>
@@ -161,7 +161,7 @@ const ObjectInput = <T extends ZodObject<any>>(props: { schema: T; name: string;
         }
         if (v instanceof ZodObject) {
           return (
-            <div className={'row'} key={k}>
+            <div className="row" key={k}>
               <label>{k}</label>
               <ObjectInput schema={v as ZodObject<any>} name={k} object={props.object[k]} onChange={(v) => updateObjectProperty(k, v)} />
             </div>
@@ -185,7 +185,7 @@ const ObjectInput = <T extends ZodObject<any>>(props: { schema: T; name: string;
 export const AutoForm = <T extends any>(props: { schema: any; object: any; onChange: (v: T) => void }) => {
   return (
     <div className="auto-form">
-      <ObjectInput schema={props.schema} name={'self'} onChange={props.onChange} object={props.object} />
+      <ObjectInput schema={props.schema} name="self" onChange={props.onChange} object={props.object} />
     </div>
   );
 };
