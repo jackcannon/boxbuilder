@@ -53,7 +53,6 @@ const initialise = <T>(schema: ZodSchema, backup: object): T => {
     return data;
   } catch (e) {
     console.log('error parsing query', e);
-    // ignore
   }
   return startForm;
 };
