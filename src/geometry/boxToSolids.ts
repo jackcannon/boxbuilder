@@ -4,15 +4,15 @@ import { subtract, union } from '@jscad/modeling/src/operations/booleans';
 import { transforms } from '@jscad/modeling';
 import { Box } from '../form/schema';
 
-export const box_to_solids = (box: Box): Geometry[] => {
+export const boxToSolids = (box: Box): Geometry[] => {
   // gap between the two shapes
   let gap = 3;
-  let lid_thick = box.lidThickness;
+  let lidThick = box.lidThickness;
   // corner radius must be smaller than half the box dimensions
   let corner = Math.min(box.width / 2, box.depth / 2, box.height / 2, box.cornerRadius);
-  //thickness must be less than box dimensions
+  // thickness must be less than box dimensions
   let thick = Math.min(box.wallThickness, box.width - 0.1);
-  let lid_tol = box.lidTolerance;
+  let lidTol = box.lidTolerance;
 
   try {
     return [
@@ -32,20 +32,20 @@ export const box_to_solids = (box: Box): Geometry[] => {
       ),
       // the lid
       transforms.translate(
-        [box.width / 2 + gap, 0, lid_thick / 2],
+        [box.width / 2 + gap, 0, lidThick / 2],
         union(
           subtract(
             cuboid({
-              size: [box.width - thick - lid_tol, box.depth - thick - lid_tol, lid_thick]
+              size: [box.width - thick - lidTol, box.depth - thick - lidTol, lidThick]
             }),
             cuboid({
-              size: [box.width - thick - lid_tol - thick, box.depth - thick - lid_tol - thick, 20],
-              center: [0, 0, -lid_thick / 2 / 2 + lid_thick / 2]
+              size: [box.width - thick - lidTol - thick, box.depth - thick - lidTol - thick, 20],
+              center: [0, 0, -lidThick / 2 / 2 + lidThick / 2]
             })
           ),
           cuboid({
-            size: [box.width, box.depth, lid_thick / 2],
-            center: [0, 0, -lid_thick / 2 / 2]
+            size: [box.width, box.depth, lidThick / 2],
+            center: [0, 0, -lidThick / 2 / 2]
           })
         )
       )

@@ -1,36 +1,30 @@
 // @ts-ignore
 import * as serializer from '@jscad/stl-serializer';
 import { Renderer } from 'jscad-react';
-import { Geometry } from '@jscad/modeling/src/geometries/types';
+import { Geom3, Geometry } from '@jscad/modeling/src/geometries/types';
 
-import { Box, BoxSchema, default_box } from './form/schema';
-import { box_to_solids } from './geometry/boxToSolids';
+import { Box, BoxSchema, defaultBox } from './form/schema';
+import { boxToSolids } from './geometry/boxToSolids';
+import { exportSTL } from './geometry/exportStl';
 
-import { forceDownloadBlob } from './util';
 import { AutoForm } from './autoform';
 import { useHistoryDoc } from './useHistoryDoc';
 
 import './App.css';
 
-const export_stl = (solids: Geometry[]) => {
-  const rawData = serializer.serialize({ binary: true }, solids);
-  const blob = new Blob(rawData, { type: 'model/stl' });
-  forceDownloadBlob('box.stl', blob);
-};
-
-function App() {
-  const [box, set_box] = useHistoryDoc<Box>(BoxSchema, default_box);
-  const solids = box_to_solids(box);
+const App = () => {
+  const [box, setBox] = useHistoryDoc<Box>(BoxSchema, defaultBox);
+  const solids = boxToSolids(box);
   return (
     <main>
       <h1>Simple STL Box Generator</h1>
       <h2>For 3D printers</h2>
-      <AutoForm object={box} schema={BoxSchema} onChange={set_box} />
+      <AutoForm object={box} schema={BoxSchema} onChange={setBox} />
       <nav>
-        <button onClick={() => export_stl(solids)}>Generate STL</button>
+        <button onClick={() => exportSTL(solids)}>Generate STL</button>
         <a href={'https://github.com/joshmarinacci/boxbuilder'}>GitHub source</a>
       </nav>
-      <Renderer solids={solids} width={800} height={450} />
+      <Renderer solids={solids as Geom3[]} width={800} height={450} />
       <aside>
         <table>
           <tr>
@@ -49,6 +43,6 @@ function App() {
       </aside>
     </main>
   );
-}
+};
 
 export default App;

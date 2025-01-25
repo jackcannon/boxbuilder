@@ -12,7 +12,7 @@ export const BoxSchema = z.object({
 
 export type Box = z.infer<typeof BoxSchema>;
 
-export const default_box = {
+export const defaultBox = {
   width: 10,
   height: 10,
   depth: 10,
