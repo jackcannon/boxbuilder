@@ -6,13 +6,13 @@ import { FormObject } from '../form/schema';
 
 export const formToSolids = (form: FormObject): Geometry[] => {
   // gap between the two shapes
-  let gap = 3;
-  let lidThick = form.lidThickness;
-  // corner radius must be smaller than half the box dimensions
-  let corner = Math.min(form.width / 2, form.depth / 2, form.height / 2);
+  const gap = form.spacing;
+  const lidThick = form.lidThickness;
+  const lidDepth = form.lidDepth;
+  const lidTol = form.lidTolerance;
+
   // thickness must be less than box dimensions
-  let thick = Math.min(form.wallThickness, form.width - 0.1);
-  let lidTol = form.lidTolerance;
+  const wllThick = Math.min(form.wallThickness, form.width - 0.1);
 
   try {
     return [
@@ -24,27 +24,67 @@ export const formToSolids = (form: FormObject): Geometry[] => {
             size: [form.width, form.depth, form.height]
           }),
           cuboid({
-            size: [form.width - thick, form.depth - thick, form.height],
-            center: [0, 0, thick]
+            size: [form.width - wllThick, form.depth - wllThick, form.height],
+            center: [0, 0, wllThick]
           })
         )
       ),
+
       // the lid
       transforms.translate(
-        [form.width / 2 + gap, 0, lidThick / 2],
+        [
+          //
+          form.width / 2 + gap,
+          0,
+          lidThick / 2
+        ],
         union(
           subtract(
             cuboid({
-              size: [form.width - thick - lidTol, form.depth - thick - lidTol, lidThick]
+              // lid wall outer
+              size: [
+                //
+                form.width - wllThick - lidTol,
+                form.depth - wllThick - lidTol,
+                lidDepth
+              ],
+              center: [
+                //
+                0,
+                0,
+                lidDepth / 2
+              ]
             }),
             cuboid({
-              size: [form.width - thick - lidTol - thick, form.depth - thick - lidTol - thick, 20],
-              center: [0, 0, -lidThick / 2 / 2 + lidThick / 2]
+              // lid wall inner (cutout)
+              size: [
+                //
+                form.width - wllThick - lidTol - wllThick,
+                form.depth - wllThick - lidTol - wllThick,
+                100
+              ],
+              center: [
+                //
+                0,
+                0,
+                -lidThick / 2 / 2 + lidDepth / 2
+              ]
             })
           ),
+          // lid top
           cuboid({
-            size: [form.width, form.depth, lidThick / 2],
-            center: [0, 0, -lidThick / 2 / 2]
+            size: [
+              //
+              form.width,
+              form.depth,
+              lidThick / 2
+            ],
+            center: [
+              //
+              0,
+              0,
+              -lidThick / 2 / 2
+            ]
           })
         )
       )

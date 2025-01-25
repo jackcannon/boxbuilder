@@ -6,7 +6,9 @@ export const FormSchema = z.object({
   depth: z.number().min(0.01),
   wallThickness: z.number().min(0.01),
   lidThickness: z.number().min(0.01),
+  lidDepth: z.number().min(0.01),
   lidTolerance: z.number().min(0.01),
+  spacing: z.number().min(0.01),
   fileName: z.string().min(1)
 });
 
@@ -77,6 +79,16 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     step: 0.2,
     max: 5
   },
+  lidDepth: {
+    paramName: 'ld_d',
+    type: 'slider',
+    displayName: 'Lid Depth',
+    description: 'How deep the lid goes into the box',
+    defaultValue: 2,
+    unit: 'mm',
+    step: 0.2,
+    max: 10
+  },
   lidTolerance: {
     paramName: 'ld_tol',
     type: 'slider',
@@ -86,6 +98,16 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     unit: 'mm',
     step: 0.01,
     max: 1
+  },
+  spacing: {
+    paramName: 'sp',
+    type: 'slider',
+    displayName: 'Spacing',
+    description: 'How much space between the parts',
+    defaultValue: 3,
+    unit: 'mm',
+    step: 0.5,
+    max: 10
   },
   fileName: {
     paramName: 'fn',
