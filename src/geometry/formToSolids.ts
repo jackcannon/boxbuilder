@@ -9,7 +9,7 @@ export const formToSolids = (form: FormObject): Geometry[] => {
   let gap = 3;
   let lidThick = form.lidThickness;
   // corner radius must be smaller than half the box dimensions
-  let corner = Math.min(form.width / 2, form.depth / 2, form.height / 2, form.cornerRadius);
+  let corner = Math.min(form.width / 2, form.depth / 2, form.height / 2);
   // thickness must be less than box dimensions
   let thick = Math.min(form.wallThickness, form.width - 0.1);
   let lidTol = form.lidTolerance;
@@ -22,7 +22,6 @@ export const formToSolids = (form: FormObject): Geometry[] => {
         subtract(
           cuboid({
             size: [form.width, form.depth, form.height]
-            // roundRadius: corner,
           }),
           cuboid({
             size: [form.width - thick, form.depth - thick, form.height],

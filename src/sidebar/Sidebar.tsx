@@ -1,13 +1,13 @@
+import { TextField } from '@mui/material';
 import { Geometry } from '@jscad/modeling/src/geometries/types';
 
 import { exportSTL } from '../geometry/exportStl';
 import { FormObject, FormSchema } from '../form/schema';
+import { Form } from '../form/Form';
 
 import logo from '/logo.svg';
 
 import './sidebar.css';
-import { TextField } from '@mui/material';
-import { Form } from '../form/Form';
 
 interface Props {
   style: React.CSSProperties | undefined;
@@ -26,7 +26,7 @@ export const Sidebar = ({ style, form, setForm, solids }: Props) => {
       <pre>{JSON.stringify(form, null, 2)}</pre>
 
       <nav>
-        <button onClick={() => exportSTL(solids)}>Generate STL</button>
+        <button onClick={() => exportSTL(solids, form.fileName)}>Generate STL</button>
         <a href={'https://github.com/joshmarinacci/boxbuilder'}>GitHub source</a>
       </nav>
     </section>
