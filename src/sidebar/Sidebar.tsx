@@ -4,7 +4,7 @@ import { exportSTL } from '../geometry/exportStl';
 import { FormObject, FormSchema } from '../form/schema';
 import { AutoForm } from '../autoform';
 
-import logo from '../../public/logo.svg';
+import logo from '/logo.svg';
 
 import './sidebar.css';
 
