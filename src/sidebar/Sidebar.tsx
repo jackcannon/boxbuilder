@@ -1,5 +1,6 @@
-import { TextField } from '@mui/material';
+import { Button, Tooltip } from '@mui/material';
 import { Geometry } from '@jscad/modeling/src/geometries/types';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 import { exportSTL } from '../geometry/exportStl';
 import { FormObject, FormSchema } from '../form/schema';
@@ -23,12 +24,23 @@ export const Sidebar = ({ style, form, setForm, solids }: Props) => {
 
       <Form object={form} schema={FormSchema} onChange={setForm} />
 
-      <pre>{JSON.stringify(form, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(form, null, 2)}</pre> */}
 
-      <nav>
-        <button onClick={() => exportSTL(solids, form.fileName)}>Generate STL</button>
-        <a href={'https://github.com/joshmarinacci/boxbuilder'}>GitHub source</a>
-      </nav>
+      <div>
+        <Button variant="contained" color="primary" onClick={() => exportSTL(solids, form.fileName)}>
+          Download STL
+        </Button>
+      </div>
+
+      <div className="gap"></div>
+
+      <div className="footer">
+        <Tooltip title="View source on GitHub" arrow>
+          <a href="https://github.com/jackcannon/boxbuilder" className="github-link">
+            <GitHubIcon />
+          </a>
+        </Tooltip>
+      </div>
     </section>
   );
 };

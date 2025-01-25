@@ -1,4 +1,6 @@
-import { Grid2, Input, InputAdornment, Slider, TextField, Typography } from '@mui/material';
+import { Grid2, Input, InputAdornment, Slider, TextField, Tooltip, Typography } from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
+
 import { FormInputConfig, FormObject } from './schema';
 
 interface InputProps<T> {
@@ -119,7 +121,10 @@ export const FormInput = <T extends unknown>(props: InputProps<T>) => {
     <Grid2 container spacing={0} sx={{ alignItems: 'center', margin: '0 0.25em 0.75em' }}>
       <Grid2 sx={{ width: '100%' }}>
         <Typography variant="body2" id={`input-slider-${propName}`}>
-          {config.displayName}
+          {config.displayName}{' '}
+          <Tooltip title={config.description} arrow>
+            <InfoIcon sx={{ fontSize: '1em', verticalAlign: 'middle', margin: '-0.5em 0 -0.4em', marginLeft: '0.25em', opacity: 0.5 }} />
+          </Tooltip>
         </Typography>
       </Grid2>
       <Grid2 container spacing={2} sx={{ width: '100%' }}>
