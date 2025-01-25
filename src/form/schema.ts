@@ -1,6 +1,6 @@
 import z from 'zod';
 
-export const BoxSchema = z.object({
+export const FormSchema = z.object({
   width: z.number().min(1).int(),
   height: z.number().min(1).int(),
   depth: z.number().min(1).int(),
@@ -10,9 +10,10 @@ export const BoxSchema = z.object({
   cornerRadius: z.number().min(1).max(5)
 });
 
-export type Box = z.infer<typeof BoxSchema>;
+export type FormSchemaType = typeof FormSchema;
+export type FormObject = z.infer<FormSchemaType>;
 
-export const defaultBox = {
+export const defaultForm = {
   width: 10,
   height: 10,
   depth: 10,

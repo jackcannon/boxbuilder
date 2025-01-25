@@ -1,6 +1,7 @@
 import { ZodArray, ZodEffects, ZodEnum, ZodNumber, ZodObject, ZodString } from 'zod';
 import React, { useState, ChangeEvent } from 'react';
 import { HBox } from './common';
+import { FormObject, FormSchemaType } from './form/schema';
 
 const RangeNumberInput = <T extends ZodNumber>(props: { schema: T; value: number; name: string; onChange: (n: number) => void; range: boolean }) => {
   let scale = 1;
@@ -182,7 +183,7 @@ const ObjectInput = <T extends ZodObject<any>>(props: { schema: T; name: string;
   );
 };
 
-export const AutoForm = <T extends any>(props: { schema: any; object: any; onChange: (v: T) => void }) => {
+export const AutoForm = <T extends any>(props: { schema: FormSchemaType; object: FormObject; onChange: (v: T) => void }) => {
   return (
     <div className="auto-form">
       <ObjectInput schema={props.schema} name="self" onChange={props.onChange} object={props.object} />

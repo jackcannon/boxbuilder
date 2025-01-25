@@ -2,7 +2,7 @@ import { ZodSchema } from 'zod';
 import { useEffect, useState } from 'react';
 
 export const startDoc = <T>(schema: ZodSchema, backup: object): T => {
-  const startBox = schema.parse(backup);
+  const startForm = schema.parse(backup);
   try {
     let q = window.location.search;
     if (q && q.startsWith('?data=')) {
@@ -15,7 +15,7 @@ export const startDoc = <T>(schema: ZodSchema, backup: object): T => {
   } catch (e) {
     console.log('error happened', e);
   }
-  return startBox;
+  return startForm;
 };
 
 let debounceTimer: any;
@@ -23,23 +23,23 @@ const debounce = (callback: any, time: number) => {
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(callback, time);
 };
-export const saveDoc = <T>(newBox: T) => {
+export const saveDoc = <T>(newForm: T) => {
   debounce(() => {
-    let str = encodeURIComponent(JSON.stringify(newBox));
-    window.history.pushState(newBox, 'box-state', '?data=' + str);
+    let str = encodeURIComponent(JSON.stringify(newForm));
+    window.history.pushState(newForm, 'form-state', '?data=' + str);
   }, 1000);
 };
 
-export const useHistoryDoc = <A>(schema: ZodSchema, defaultBox: any): [A, (a: A) => void] => {
-  const [box, setBox] = useState<A>(() => startDoc<A>(schema, defaultBox));
-  const doSetBox = (box: A) => {
-    setBox(box);
-    saveDoc<A>(box);
+export const useHistoryDoc = <A>(schema: ZodSchema, defaultForm: any): [A, (a: A) => void] => {
+  const [form, setForm] = useState<A>(() => startDoc<A>(schema, defaultForm));
+  const doSetForm = (form: A) => {
+    setForm(form);
+    saveDoc<A>(form);
   };
   useEffect(() => {
     const historyChanged = (event: PopStateEvent) => {
       try {
-        doSetBox(schema.parse(event.state));
+        doSetForm(schema.parse(event.state));
       } catch (e) {
         console.log('error restoring from history');
       }
@@ -49,5 +49,5 @@ export const useHistoryDoc = <A>(schema: ZodSchema, defaultBox: any): [A, (a: A)
       window.removeEventListener('popstate', historyChanged);
     };
   });
-  return [box, doSetBox];
+  return [form, doSetForm];
 };

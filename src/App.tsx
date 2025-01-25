@@ -1,5 +1,5 @@
-import { Box, BoxSchema, defaultBox } from './form/schema';
-import { boxToSolids } from './geometry/boxToSolids';
+import { FormObject, FormSchema, defaultForm } from './form/schema';
+import { formToSolids } from './geometry/formToSolids';
 import { Render } from './render/Render';
 import { Sidebar } from './sidebar/Sidebar';
 
@@ -13,15 +13,15 @@ const getStyle = (percent: number) => ({
 });
 
 const App = () => {
-  const [box, setBox] = useHistoryDoc<Box>(BoxSchema, defaultBox);
-  const solids = boxToSolids(box);
+  const [form, setForm] = useHistoryDoc<FormObject>(FormSchema, defaultForm);
+  const solids = formToSolids(form);
 
   const sidebarSize = SIDEBAR_PERCENT;
   const renderSize = 100 - SIDEBAR_PERCENT;
 
   return (
     <main>
-      <Sidebar box={box} setBox={setBox} solids={solids} style={getStyle(sidebarSize)} />
+      <Sidebar form={form} setForm={setForm} solids={solids} style={getStyle(sidebarSize)} />
       <Render solids={solids} style={getStyle(renderSize)} />
     </main>
   );
