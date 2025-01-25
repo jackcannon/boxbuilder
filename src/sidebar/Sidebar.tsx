@@ -2,11 +2,12 @@ import { Geometry } from '@jscad/modeling/src/geometries/types';
 
 import { exportSTL } from '../geometry/exportStl';
 import { FormObject, FormSchema } from '../form/schema';
-import { AutoForm } from '../autoform';
 
 import logo from '/logo.svg';
 
 import './sidebar.css';
+import { TextField } from '@mui/material';
+import { Form } from '../form/Form';
 
 interface Props {
   style: React.CSSProperties | undefined;
@@ -19,7 +20,11 @@ export const Sidebar = ({ style, form, setForm, solids }: Props) => {
   return (
     <section className="sidebar" style={style}>
       <img src={logo} alt="logo" className="logo" />
-      <AutoForm object={form} schema={FormSchema} onChange={setForm} />
+
+      <Form object={form} schema={FormSchema} onChange={setForm} />
+
+      <pre>{JSON.stringify(form, null, 2)}</pre>
+
       <nav>
         <button onClick={() => exportSTL(solids)}>Generate STL</button>
         <a href={'https://github.com/joshmarinacci/boxbuilder'}>GitHub source</a>

@@ -6,7 +6,15 @@ import { Sidebar } from './sidebar/Sidebar';
 import { SIDEBAR_PERCENT } from './constants';
 import { useHistoryDoc } from './useHistoryDoc';
 
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
 import './App.css';
+
+const theme = createTheme({
+  colorSchemes: {
+    dark: true
+  }
+});
 
 const getStyle = (percent: number) => ({
   width: `${percent}vw`
@@ -20,10 +28,12 @@ const App = () => {
   const renderSize = 100 - SIDEBAR_PERCENT;
 
   return (
-    <main>
-      <Sidebar form={form} setForm={setForm} solids={solids} style={getStyle(sidebarSize)} />
-      <Render solids={solids} style={getStyle(renderSize)} />
-    </main>
+    <ThemeProvider theme={theme} defaultMode="system">
+      <main>
+        <Sidebar form={form} setForm={setForm} solids={solids} style={getStyle(sidebarSize)} />
+        <Render solids={solids} style={getStyle(renderSize)} />
+      </main>
+    </ThemeProvider>
   );
 };
 
