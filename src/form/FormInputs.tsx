@@ -1,4 +1,4 @@
-import { Grid2, Input, InputAdornment, Slider, TextField, Tooltip, Typography } from '@mui/material';
+import { Grid2, Input, InputAdornment, Slider, Switch, TextField, Tooltip, Typography } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 
 import { FormInputConfig, FormObject } from './schema';
@@ -101,6 +101,39 @@ export const FormInputText = <T extends unknown>({ propName, config, value, onCh
   );
 };
 
+const ClickableType = ({ text, onClick }: { text?: string; onClick: () => any }) => {
+  if (!text) return null;
+  return (
+    <Typography variant="body2" onClick={onClick} sx={{ cursor: 'pointer' }}>
+      {text}
+    </Typography>
+  );
+};
+export const FormInputCheckbox = <T extends unknown>({ propName, config, value, onChange }: InputProps<T>) => {
+  const endAdornment = config.unit ? (
+    <InputAdornment position="end" sx={{ margin: 0 }}>
+      {config.unit}
+    </InputAdornment>
+  ) : undefined;
+
+  return (
+    <Grid2 container flex={1} flexGrow={1} justifyContent="center" alignItems="center">
+      <Grid2>
+        <ClickableType text={config.falseLabel} onClick={() => onChange(false as T)} />
+      </Grid2>
+      <Switch
+        checked={Boolean(value)}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChange(Boolean(event.target.checked) as T)}
+        inputProps={{ 'aria-label': 'controlled' }}
+        sx={{ margin: '0' }}
+      />
+      <Grid2>
+        <ClickableType text={config.trueLabel} onClick={() => onChange(true as T)} />
+      </Grid2>
+    </Grid2>
+  );
+};
+
 export const FormInput = <T extends unknown>(props: InputProps<T>) => {
   const { propName, config, value, onChange } = props;
 
@@ -112,6 +145,8 @@ export const FormInput = <T extends unknown>(props: InputProps<T>) => {
         return <FormInputNumber {...props} />;
       case 'text':
         return <FormInputText {...props} />;
+      case 'checkbox':
+        return <FormInputCheckbox {...props} />;
       default:
         return <FormInputSlider {...props} />;
     }

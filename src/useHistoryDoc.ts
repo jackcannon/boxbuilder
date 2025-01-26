@@ -22,12 +22,21 @@ const queryToObject = (query: string, defaultValues: FormObject): FormObject => 
   for (const [paramName, value] of Object.entries(params)) {
     const key = paramNameDictionary[paramName];
     if (!key) continue;
-    const config = formConfig[key as keyof FormObject];
 
+    const config = formConfig[key as keyof FormObject];
     if (!config) continue;
+
+    let parsedValue: any = value;
+    if (['number', 'slider'].includes(config.type)) {
+      parsedValue = parseFloat(value);
+    }
+    if (['checkbox', 'boolean'].includes(config.type)) {
+      parsedValue = Boolean(parseInt(value));
+    }
+
     result = {
       ...result,
-      [key]: ['number', 'slider'].includes(config.type) ? parseFloat(value) : value
+      [key]: parsedValue
     };
   }
 
@@ -38,7 +47,13 @@ const objectToQuery = (obj: FormObject): string => {
 
   for (const [key, value] of Object.entries(obj)) {
     const config = formConfig[key as keyof FormObject];
-    params.set(config.paramName, value.toString());
+
+    let valueStr = value.toString();
+    if (['checkbox', 'boolean'].includes(config.type)) {
+      valueStr = value ? '1' : '0';
+    }
+
+    params.set(config.paramName, valueStr);
   }
 
   return params.toString();
