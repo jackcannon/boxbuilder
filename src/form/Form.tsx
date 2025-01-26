@@ -1,7 +1,7 @@
 import { FormInput } from './FormInputs';
 import { formConfig, FormObject, FormSchemaType } from './schema';
 
-import './Form.css';
+import './form.css';
 
 interface Props {
   schema: FormSchemaType;
