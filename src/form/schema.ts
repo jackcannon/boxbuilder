@@ -82,7 +82,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     description: 'Thickness of the box walls',
     defaultValue: 2,
     unit: 'mm',
-    sliderStep: 0.2,
+    sliderStep: 0.1,
     max: 5
   },
   lidThickness: {
@@ -92,7 +92,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     description: 'Thickness of the box lid',
     defaultValue: 2,
     unit: 'mm',
-    sliderStep: 0.2,
+    sliderStep: 0.1,
     max: 5
   },
   lidDepth: {
@@ -102,7 +102,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     description: 'How deep the lid goes into the box',
     defaultValue: 2,
     unit: 'mm',
-    sliderStep: 0.2,
+    sliderStep: 0.1,
     max: 10
   },
   lidTolerance: {

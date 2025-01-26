@@ -1,5 +1,5 @@
 import { Grid2, Input, InputAdornment, Slider, Switch, TextField, Tooltip, Typography } from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
+import HelpIcon from '@mui/icons-material/Help';
 
 import { FormInputConfig, FormObject } from './schema';
 
@@ -158,7 +158,15 @@ export const FormInput = <T extends unknown>(props: InputProps<T>) => {
         <Typography variant="body2" id={`input-slider-${propName}`}>
           {config.displayName}{' '}
           <Tooltip title={config.description} arrow>
-            <InfoIcon sx={{ fontSize: '1em', verticalAlign: 'middle', margin: '-0.5em 0 -0.4em', marginLeft: '0.25em', opacity: 0.5 }} />
+            <HelpIcon
+              sx={{
+                fontSize: '1.2em',
+                verticalAlign: 'middle',
+                margin: '-0.5em 0 -0.4em',
+                marginLeft: '0.25em',
+                opacity: 0.5
+              }}
+            />
           </Tooltip>
         </Typography>
       </Grid2>
