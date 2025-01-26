@@ -3,13 +3,14 @@
 ![logo](public/logo192.png)
 
 > This is a fork of [joshmarinacci](https://github.com/joshmarinacci)'s [boxbuilder repo](https://github.com/joshmarinacci/boxbuilder)
+>
 > A lot of cosmetic stuff has changed, but the underlying idea and logic comes from there
 
 Web GUI tool to generate STLs of boxes with lids for 3D printing.
 
 See [the live app here](https://apps.josh.earth/boxbuilder/)
 
-![screenshot](images/stl-box-generator-screenshot.png)
+![screenshot](images/screenshot.png)
 
 # How it works
 
