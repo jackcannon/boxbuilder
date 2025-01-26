@@ -16,9 +16,20 @@ export const Render = ({ style, solids }: Props) => {
 
   const sectionRatio = (100 - SIDEBAR_PERCENT) / 100;
 
+  const initialDistance = 100;
+
   return (
     <section className="render" style={style}>
-      <Renderer solids={solids as Geom3[]} width={width * sectionRatio} height={height} />
+      <Renderer
+        solids={solids as Geom3[]}
+        options={{
+          viewerOptions: {
+            initialPosition: [initialDistance, -initialDistance, initialDistance]
+          }
+        }}
+        width={width * sectionRatio}
+        height={height}
+      />
     </section>
   );
 };
