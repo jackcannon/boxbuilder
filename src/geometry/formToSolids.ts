@@ -71,7 +71,7 @@ export const formToSolids = (form: FormObject): Geometry[] => {
           //
           width / 2 + gap,
           0,
-          lidThick / 2
+          lidThick
         ]),
         union(
           subtract(
@@ -111,7 +111,7 @@ export const formToSolids = (form: FormObject): Geometry[] => {
                   //
                   0,
                   0,
-                  -lidThick / 2 / 2 + lidDepth / 2
+                  -lidThick / 2 + lidDepth / 2
                 ])
               });
             })()
@@ -122,13 +122,13 @@ export const formToSolids = (form: FormObject): Geometry[] => {
               //
               width,
               depth,
-              lidThick / 2
+              lidThick
             ]),
             center: ffA([
               //
               0,
               0,
-              -lidThick / 2 / 2
+              -lidThick / 2
             ])
           })
         )
