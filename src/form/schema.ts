@@ -8,6 +8,7 @@ export const FormSchema = z.object({
   wallThickness: z.number().min(0.01),
   lidThickness: z.number().min(0.01),
   lidDepth: z.number().min(0.01),
+  lidOverhang: z.number().min(0),
   lidTolerance: z.number().min(0.01),
   spacing: z.number().min(0.01),
   fileName: z.string().min(1)
@@ -38,7 +39,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     type: 'slider',
     displayName: 'Width',
     description: 'Width of the box',
-    defaultValue: 40,
+    defaultValue: 25,
     unit: 'mm',
     sliderStep: 1,
     inputStep: 0.25,
@@ -60,7 +61,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     type: 'slider',
     displayName: 'Depth',
     description: 'Depth of the box',
-    defaultValue: 40,
+    defaultValue: 25,
     unit: 'mm',
     sliderStep: 1,
     inputStep: 0.25,
@@ -71,7 +72,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     type: 'checkbox',
     displayName: 'Inner/Outer Dimensions',
     description: 'Are the width/height/depth the dimensions of the inside or the outside of the box?',
-    defaultValue: false,
+    defaultValue: true,
     falseLabel: 'Inner',
     trueLabel: 'Outer'
   },
@@ -80,7 +81,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     type: 'slider',
     displayName: 'Wall Thickness',
     description: 'Thickness of the box walls',
-    defaultValue: 2,
+    defaultValue: 1.5,
     unit: 'mm',
     sliderStep: 0.1,
     max: 5
@@ -90,7 +91,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     type: 'slider',
     displayName: 'Lid Thickness',
     description: 'Thickness of the box lid',
-    defaultValue: 2,
+    defaultValue: 1.5,
     unit: 'mm',
     sliderStep: 0.1,
     max: 5
@@ -100,17 +101,28 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     type: 'slider',
     displayName: 'Lid Depth',
     description: 'How deep the lid goes into the box',
-    defaultValue: 2,
+    defaultValue: 5,
     unit: 'mm',
     sliderStep: 0.1,
     max: 10
+  },
+  lidOverhang: {
+    paramName: 'ld_oh',
+    type: 'slider',
+    displayName: 'Lid Overhang',
+    description: 'How far should the lid protrude from the edge of the box',
+    defaultValue: 0,
+    unit: 'mm',
+    sliderStep: 0.1,
+    min: 0,
+    max: 3
   },
   lidTolerance: {
     paramName: 'ld_tol',
     type: 'slider',
     displayName: 'Lid Tolerance',
     description: 'Tolerance between the lid and the box on each side',
-    defaultValue: 0.05,
+    defaultValue: 0.06,
     unit: 'mm',
     sliderStep: 0.01,
     max: 1
@@ -120,7 +132,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     type: 'slider',
     displayName: 'Spacing',
     description: 'How much space between the parts',
-    defaultValue: 3,
+    defaultValue: 5,
     unit: 'mm',
     sliderStep: 0.5,
     max: 10

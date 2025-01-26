@@ -6,10 +6,10 @@ import { FormObject } from '../form/schema';
 import { ff, ffA } from '../utils';
 
 export const formToSolids = (form: FormObject): Geometry[] => {
-  // gap between the two shapes
-  const gap = form.spacing;
+  const gap = form.spacing / 2; // amount of spacing from centre for each part
   const lidThick = form.lidThickness;
   const lidDepth = form.lidDepth;
+  const lidHang = form.lidOverhang;
 
   const isOuter = form.isOuterDimensions;
 
@@ -69,7 +69,7 @@ export const formToSolids = (form: FormObject): Geometry[] => {
       transforms.translate(
         ffA([
           //
-          width / 2 + gap,
+          width / 2 + lidHang + gap,
           0,
           lidThick
         ]),
@@ -120,8 +120,8 @@ export const formToSolids = (form: FormObject): Geometry[] => {
           cuboid({
             size: ffA([
               //
-              width,
-              depth,
+              width + lidHang + lidHang,
+              depth + lidHang + lidHang,
               lidThick
             ]),
             center: ffA([
