@@ -24,7 +24,8 @@ export interface FormInputConfig {
   description: string;
   defaultValue: any;
   unit?: string;
-  step?: number; // slider step/increment value
+  sliderStep?: number; // slider step/increment value
+  inputStep?: number; // slider step/increment value
   min?: number; // where the slider limits are
   max?: number; // where the slider limits are
   trueLabel?: string; // for checkboxes
@@ -39,7 +40,8 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     description: 'Width of the box',
     defaultValue: 40,
     unit: 'mm',
-    step: 0.5,
+    sliderStep: 1,
+    inputStep: 0.25,
     max: 100
   },
   height: {
@@ -49,7 +51,8 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     description: 'Height of the box',
     defaultValue: 25,
     unit: 'mm',
-    step: 0.5,
+    sliderStep: 1,
+    inputStep: 0.25,
     max: 100
   },
   depth: {
@@ -59,7 +62,8 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     description: 'Depth of the box',
     defaultValue: 40,
     unit: 'mm',
-    step: 0.5,
+    sliderStep: 1,
+    inputStep: 0.25,
     max: 100
   },
   isOuterDimensions: {
@@ -78,7 +82,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     description: 'Thickness of the box walls',
     defaultValue: 2,
     unit: 'mm',
-    step: 0.2,
+    sliderStep: 0.2,
     max: 5
   },
   lidThickness: {
@@ -88,7 +92,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     description: 'Thickness of the box lid',
     defaultValue: 2,
     unit: 'mm',
-    step: 0.2,
+    sliderStep: 0.2,
     max: 5
   },
   lidDepth: {
@@ -98,7 +102,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     description: 'How deep the lid goes into the box',
     defaultValue: 2,
     unit: 'mm',
-    step: 0.2,
+    sliderStep: 0.2,
     max: 10
   },
   lidTolerance: {
@@ -108,7 +112,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     description: 'Tolerance between the lid and the box',
     defaultValue: 0.1,
     unit: 'mm',
-    step: 0.01,
+    sliderStep: 0.01,
     max: 1
   },
   spacing: {
@@ -118,7 +122,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     description: 'How much space between the parts',
     defaultValue: 3,
     unit: 'mm',
-    step: 0.5,
+    sliderStep: 0.5,
     max: 10
   },
   fileName: {

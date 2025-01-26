@@ -26,8 +26,8 @@ export const FormInputSlider = <T extends unknown>({ propName, config, value, on
             onChange(Number((newValue as number[])[0] ?? newValue) as any);
           }}
           aria-labelledby={`input-slider-${propName}`}
-          step={config.step}
-          min={config.min ?? config.step ?? 0}
+          step={config.sliderStep}
+          min={config.min ?? config.sliderStep ?? config.inputStep ?? 0}
           max={config.max}
         />
       </Grid2>
@@ -43,7 +43,7 @@ export const FormInputSlider = <T extends unknown>({ propName, config, value, on
           }}
           sx={{ width: '85px' }}
           inputProps={{
-            step: config.step ?? 1,
+            step: config.inputStep ?? config.sliderStep ?? 1,
             'aria-labelledby': `input-slider-${propName}`
           }}
           endAdornment={endAdornment}
@@ -72,7 +72,7 @@ export const FormInputNumber = <T extends unknown>({ propName, config, value, on
         }}
         sx={{ width: '100%' }}
         inputProps={{
-          step: config.step ?? 1,
+          step: config.inputStep ?? config.sliderStep ?? 1,
           'aria-labelledby': `input-slider-${propName}`
         }}
         endAdornment={endAdornment}
