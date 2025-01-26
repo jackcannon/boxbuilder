@@ -24,10 +24,10 @@ export const formToSolids = (form: FormObject): Geometry[] => {
   const thicknessLimit = ff((smallestDimension - lidTol - lidTol) / 2);
   const wllThick = Math.max(0, isOuter ? Math.min(form.wallThickness, thicknessLimit) : form.wallThickness);
 
-  // normalise dimensions to get OUTER dimensions
+  // normalise dimensions to get OUTER dimensions of the box
   const width = isOuter ? form.width : form.width + wllThick + wllThick;
   const depth = isOuter ? form.depth : form.depth + wllThick + wllThick;
-  const height = isOuter ? form.height : form.height + flrThick;
+  const height = isOuter ? form.height - lidThick : form.height + flrThick;
 
   try {
     const geometry = [

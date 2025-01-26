@@ -109,8 +109,8 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     paramName: 'ld_tol',
     type: 'slider',
     displayName: 'Lid Tolerance',
-    description: 'Tolerance between the lid and the box',
-    defaultValue: 0.1,
+    description: 'Tolerance between the lid and the box on each side',
+    defaultValue: 0.05,
     unit: 'mm',
     sliderStep: 0.01,
     max: 1
