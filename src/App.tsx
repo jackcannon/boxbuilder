@@ -21,7 +21,7 @@ const getStyle = (percent: number) => ({
 });
 
 const App = () => {
-  const [form, setForm] = useHistoryDoc<FormObject>(FormSchema, defaultForm);
+  const [form, setForm] = useHistoryDoc(FormSchema, defaultForm);
   const solids = formToSolids(form);
 
   const sidebarSize = SIDEBAR_PERCENT;
