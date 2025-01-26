@@ -35,7 +35,7 @@ const CadRenderComponent = ({ style, solids }: Props) => {
   );
 };
 
-export const CadRender = debounceRender(CadRenderComponent, 100, {
+export const CadRender = debounceRender(CadRenderComponent, 10, {
   leading: true,
-  maxWait: 500
+  maxWait: 50
 });
