@@ -1,6 +1,6 @@
 import { FormObject, FormSchema, defaultForm } from './form/schema';
 import { formToSolids } from './geometry/formToSolids';
-import { Render } from './render/Render';
+import { CadRender } from './render/Render';
 import { Sidebar } from './sidebar/Sidebar';
 
 import { SIDEBAR_PERCENT } from './constants';
@@ -31,7 +31,7 @@ const App = () => {
     <ThemeProvider theme={theme} defaultMode="system">
       <main>
         <Sidebar form={form} setForm={setForm} solids={solids} style={getStyle(sidebarSize)} />
-        <Render solids={solids} style={getStyle(renderSize)} />
+        <CadRender solids={solids} style={getStyle(renderSize)} />
       </main>
     </ThemeProvider>
   );

@@ -1,5 +1,6 @@
 import { Renderer } from 'jscad-react';
 import { Geom3, Geometry } from '@jscad/modeling/src/geometries/types';
+import debounceRender from 'react-debounce-render';
 
 import { useWindowSize } from './useWindowSize';
 import { SIDEBAR_PERCENT } from '../constants';
@@ -11,7 +12,7 @@ interface Props {
   solids: Geometry[];
 }
 
-export const Render = ({ style, solids }: Props) => {
+const CadRenderComponent = ({ style, solids }: Props) => {
   const [width, height] = useWindowSize();
 
   const sectionRatio = (100 - SIDEBAR_PERCENT) / 100;
@@ -33,3 +34,8 @@ export const Render = ({ style, solids }: Props) => {
     </section>
   );
 };
+
+export const CadRender = debounceRender(CadRenderComponent, 100, {
+  leading: true,
+  maxWait: 500
+});
