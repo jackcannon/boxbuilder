@@ -35,7 +35,7 @@ export const Sidebar = ({ style, form, setForm }: Props) => {
 
       <div className="footer">
         <Tooltip title="View source on GitHub" arrow>
-          <a href="https://github.com/jackcannon/boxbuilder" className="github-link">
+          <a href="https://github.com/jackcannon/boxbuilder" target="_blank" className="github-link">
             <GitHubIcon />
           </a>
         </Tooltip>

@@ -10,7 +10,7 @@ Web GUI tool to generate STLs of boxes with lids for 3D printing.
 
 See [the live app here](http://boxbuilder.cannonbury.co.uk/)
 
-![screenshot](images/screenshot.png)
+![screenshot](images/screenshot-2.png)
 
 # How it works
 
