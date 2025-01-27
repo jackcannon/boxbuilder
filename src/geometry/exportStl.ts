@@ -1,6 +1,7 @@
 // @ts-ignore
 import * as serializer from '@jscad/stl-serializer';
-import { Geometry } from '@jscad/modeling/src/geometries/types';
+import { FormObject } from '../form/schema';
+import { formToSolids } from './formToSolids';
 
 export const forceDownloadBlob = (title: string, blob: Blob) => {
   const a = document.createElement('a');
@@ -16,7 +17,8 @@ const ensureFileExtension = (name: string, ext: string = 'stl') => {
   return name + '.' + ext;
 };
 
-export const exportSTL = (solids: Geometry[], name: string = 'box') => {
+export const exportSTL = (form: FormObject, name: string = 'box') => {
+  const solids = formToSolids(form, false);
   const rawData = serializer.serialize({ binary: true }, solids);
   const blob = new Blob(rawData, { type: 'model/stl' });
   forceDownloadBlob(ensureFileExtension(name, 'stl'), blob);

@@ -14,10 +14,9 @@ interface Props {
   style: React.CSSProperties | undefined;
   form: FormObject;
   setForm: (form: FormObject) => void;
-  solids: Geometry[];
 }
 
-export const Sidebar = ({ style, form, setForm, solids }: Props) => {
+export const Sidebar = ({ style, form, setForm }: Props) => {
   return (
     <section className="sidebar" style={style}>
       <img src={logo} alt="logo" className="logo" />
@@ -27,7 +26,7 @@ export const Sidebar = ({ style, form, setForm, solids }: Props) => {
       {/* <pre>{JSON.stringify(form, null, 2)}</pre> */}
 
       <div>
-        <Button variant="contained" color="primary" onClick={() => exportSTL(solids, form.fileName)}>
+        <Button variant="contained" color="primary" onClick={() => exportSTL(form, form.fileName)}>
           Download STL
         </Button>
       </div>

@@ -157,7 +157,29 @@ export const FormInput = <T extends unknown>(props: InputProps<T>) => {
       <Grid2 sx={{ width: '100%' }}>
         <Typography variant="body2" id={`input-slider-${propName}`}>
           {config.displayName}{' '}
-          <Tooltip title={config.description} arrow>
+          <Tooltip
+            title={
+              config.warning ? (
+                <>
+                  <div>{config.description}</div>
+                  {
+                    <>
+                      <br />
+                      <Typography sx={{ fontSize: '0.9em' }}>
+                        <b>
+                          <em>Warning!</em>
+                        </b>{' '}
+                        {config.warning}
+                      </Typography>
+                    </>
+                  }
+                </>
+              ) : (
+                config.description
+              )
+            }
+            arrow
+          >
             <HelpIcon
               sx={{
                 fontSize: '1.2em',
@@ -166,6 +188,7 @@ export const FormInput = <T extends unknown>(props: InputProps<T>) => {
                 marginLeft: '0.25em',
                 opacity: 0.5
               }}
+              color={config.warning ? 'warning' : 'inherit'}
             />
           </Tooltip>
         </Typography>

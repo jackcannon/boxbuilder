@@ -4,6 +4,7 @@ export const FormSchema = z.object({
   width: z.number().min(0.01),
   height: z.number().min(0.01),
   depth: z.number().min(0.01),
+  cornerRadius: z.number().min(0),
   isOuterDimensions: z.boolean(),
   wallThickness: z.number().min(0.01),
   lidThickness: z.number().min(0.01),
@@ -23,6 +24,7 @@ export interface FormInputConfig {
   type: FormInputType;
   displayName: string;
   description: string;
+  warning?: string; // warning message to display with the description
   defaultValue: any;
   unit?: string;
   sliderStep?: number; // slider step/increment value
@@ -66,6 +68,18 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     sliderStep: 1,
     inputStep: 0.25,
     max: 100
+  },
+  cornerRadius: {
+    paramName: 'cr',
+    type: 'slider',
+    displayName: 'Corner Radius',
+    description: 'Radius of the corners of the box',
+    warning: 'Smooth curves are laggy to render, so the preview has simplified corners. Exported files will have smooth corners',
+    defaultValue: 0,
+    unit: 'mm',
+    sliderStep: 0.1,
+    min: 0,
+    max: 10
   },
   isOuterDimensions: {
     paramName: 'is_outer',

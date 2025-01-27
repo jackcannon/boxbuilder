@@ -22,7 +22,6 @@ const getStyle = (percent: number) => ({
 
 const App = () => {
   const [form, setForm] = useHistoryDoc(FormSchema, defaultForm);
-  const solids = formToSolids(form);
 
   const sidebarSize = SIDEBAR_PERCENT;
   const renderSize = 100 - SIDEBAR_PERCENT;
@@ -30,8 +29,8 @@ const App = () => {
   return (
     <ThemeProvider theme={theme} defaultMode="system">
       <main>
-        <Sidebar form={form} setForm={setForm} solids={solids} style={getStyle(sidebarSize)} />
-        <CadRender solids={solids} style={getStyle(renderSize)} />
+        <Sidebar form={form} setForm={setForm} style={getStyle(sidebarSize)} />
+        <CadRender form={form} style={getStyle(renderSize)} />
       </main>
     </ThemeProvider>
   );

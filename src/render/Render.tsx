@@ -2,6 +2,9 @@ import { Renderer } from 'jscad-react';
 import { Geom3, Geometry } from '@jscad/modeling/src/geometries/types';
 import debounceRender from 'react-debounce-render';
 
+import { FormObject } from '../form/schema';
+import { formToSolids } from '../geometry/formToSolids';
+
 import { useWindowSize } from './useWindowSize';
 import { SIDEBAR_PERCENT } from '../constants';
 
@@ -9,10 +12,11 @@ import './render.css';
 
 interface Props {
   style: React.CSSProperties | undefined;
-  solids: Geometry[];
+  form: FormObject;
 }
 
-const CadRenderComponent = ({ style, solids }: Props) => {
+const CadRenderComponent = ({ style, form }: Props) => {
+  const solids = formToSolids(form, true);
   const [width, height] = useWindowSize();
 
   const sectionRatio = (100 - SIDEBAR_PERCENT) / 100;
@@ -35,7 +39,9 @@ const CadRenderComponent = ({ style, solids }: Props) => {
   );
 };
 
-export const CadRender = debounceRender(CadRenderComponent, 10, {
+const DEBOUNCE_WAIT = 30;
+const DEBOUNCE_MAX_WAIT = DEBOUNCE_WAIT * 5;
+export const CadRender = debounceRender(CadRenderComponent, DEBOUNCE_WAIT, {
   leading: true,
-  maxWait: 50
+  maxWait: DEBOUNCE_MAX_WAIT
 });
