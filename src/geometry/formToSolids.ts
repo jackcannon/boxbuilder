@@ -88,7 +88,8 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
   // normalise dimensions to get OUTER dimensions of the box
   const width = isOuter ? form.width : form.width + wllThick + wllThick;
   const depth = isOuter ? form.depth : form.depth + wllThick + wllThick;
-  const height = isOuter ? form.height - lidThick : form.height + flrThick;
+  const lidCutoutOffset = form.lidCutout ? 0 : lidDepth;
+  const height = isOuter ? form.height - lidThick : form.height + flrThick + lidCutoutOffset;
   const cornerRadius = form.cornerRadius <= 0 ? -wllThick : form.cornerRadius; // if 0, dont ever round corners
   const radius = isOuter ? cornerRadius : cornerRadius + wllThick;
 
@@ -175,7 +176,7 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
               const cutDepth = ff(depth + xyOffsets.lidWallInner);
 
               // if the cutout is invalid, don't cut out anything
-              if (cutWidth <= 0 || cutDepth <= 0) {
+              if (!form.lidCutout || cutWidth <= 0 || cutDepth <= 0) {
                 return cuboid({ size: [0, 0, 0] });
               }
 

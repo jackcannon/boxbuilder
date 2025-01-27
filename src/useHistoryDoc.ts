@@ -30,7 +30,7 @@ const queryToObject = (query: string, defaultValues: FormObject): FormObject => 
     if (['number', 'slider'].includes(config.type)) {
       parsedValue = parseFloat(value);
     }
-    if (['checkbox', 'boolean'].includes(config.type)) {
+    if (['switch', 'boolean'].includes(config.type)) {
       parsedValue = Boolean(parseInt(value));
     }
 
@@ -49,7 +49,7 @@ const objectToQuery = (obj: FormObject): string => {
     const config = formConfig[key as keyof FormObject];
 
     let valueStr = value.toString();
-    if (['checkbox', 'boolean'].includes(config.type)) {
+    if (['switch', 'boolean'].includes(config.type)) {
       valueStr = value ? '1' : '0';
     }
 

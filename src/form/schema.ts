@@ -9,6 +9,7 @@ export const FormSchema = z.object({
   wallThickness: z.number().min(0.01),
   lidThickness: z.number().min(0.01),
   lidDepth: z.number().min(0.01),
+  lidCutout: z.boolean(),
   lidOverhang: z.number().min(0),
   lidTolerance: z.number().min(0.01),
   spacing: z.number().min(0.01),
@@ -18,7 +19,7 @@ export const FormSchema = z.object({
 export type FormSchemaType = typeof FormSchema;
 export type FormObject = z.infer<FormSchemaType>;
 
-export type FormInputType = 'slider' | 'number' | 'text' | 'checkbox';
+export type FormInputType = 'slider' | 'number' | 'text' | 'switch' | 'boolean';
 export interface FormInputConfig {
   paramName: string; // key in the query string
   type: FormInputType;
@@ -31,8 +32,8 @@ export interface FormInputConfig {
   inputStep?: number; // slider step/increment value
   min?: number; // where the slider limits are
   max?: number; // where the slider limits are
-  trueLabel?: string; // for checkboxes
-  falseLabel?: string; // for checkboxes
+  trueLabel?: string; // for switches
+  falseLabel?: string; // for switches
 }
 
 export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
@@ -83,7 +84,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
   },
   isOuterDimensions: {
     paramName: 'is_outer',
-    type: 'checkbox',
+    type: 'switch',
     displayName: 'Inner/Outer Dimensions',
     description: 'Are the width/height/depth the dimensions of the inside or the outside of the box?',
     defaultValue: true,
@@ -119,6 +120,13 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     unit: 'mm',
     sliderStep: 0.1,
     max: 10
+  },
+  lidCutout: {
+    paramName: 'ld_co',
+    type: 'boolean',
+    displayName: 'Lid Cutout',
+    description: 'Should the lid have a cutout instead of a solid top?',
+    defaultValue: true
   },
   lidOverhang: {
     paramName: 'ld_oh',

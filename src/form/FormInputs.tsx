@@ -1,4 +1,4 @@
-import { Grid2, Input, InputAdornment, Slider, Switch, Tooltip, Typography } from '@mui/material';
+import { Checkbox, Grid2, Input, InputAdornment, Slider, Switch, Tooltip, Typography } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 
 import { FormInputConfig } from './schema';
@@ -109,13 +109,7 @@ const ClickableType = ({ text, onClick }: { text?: string; onClick: () => any })
     </Typography>
   );
 };
-export const FormInputCheckbox = <T extends unknown>({ propName, config, value, onChange }: InputProps<T>) => {
-  const endAdornment = config.unit ? (
-    <InputAdornment position="end" sx={{ margin: 0 }}>
-      {config.unit}
-    </InputAdornment>
-  ) : undefined;
-
+export const FormInputSwitch = <T extends unknown>({ propName, config, value, onChange }: InputProps<T>) => {
   return (
     <Grid2 container flex={1} flexGrow={1} justifyContent="center" alignItems="center">
       <Grid2>
@@ -133,6 +127,18 @@ export const FormInputCheckbox = <T extends unknown>({ propName, config, value, 
     </Grid2>
   );
 };
+export const FormInputBoolean = <T extends unknown>({ propName, config, value, onChange }: InputProps<T>) => {
+  return (
+    <Grid2 container flex={1} flexGrow={1} justifyContent="center" alignItems="center">
+      <Checkbox
+        checked={Boolean(value)}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChange(Boolean(event.target.checked) as T)}
+        inputProps={{ 'aria-label': 'controlled' }}
+        sx={{ margin: '0' }}
+      />
+    </Grid2>
+  );
+};
 
 export const FormInput = <T extends unknown>(props: InputProps<T>) => {
   const { propName, config, value, onChange } = props;
@@ -145,8 +151,10 @@ export const FormInput = <T extends unknown>(props: InputProps<T>) => {
         return <FormInputNumber {...props} />;
       case 'text':
         return <FormInputText {...props} />;
-      case 'checkbox':
-        return <FormInputCheckbox {...props} />;
+      case 'switch':
+        return <FormInputSwitch {...props} />;
+      case 'boolean':
+        return <FormInputBoolean {...props} />;
       default:
         return <FormInputSlider {...props} />;
     }
