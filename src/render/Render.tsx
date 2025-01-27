@@ -1,5 +1,5 @@
 import { Renderer } from 'jscad-react';
-import { Geom3, Geometry } from '@jscad/modeling/src/geometries/types';
+import { Geom3 } from '@jscad/modeling/src/geometries/types';
 import debounceRender from 'react-debounce-render';
 
 import { FormObject } from '../form/schema';

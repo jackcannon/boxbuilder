@@ -1,12 +1,11 @@
-import { FormObject, FormSchema, defaultForm } from './form/schema';
-import { formToSolids } from './geometry/formToSolids';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
+import { FormSchema, defaultForm } from './form/schema';
 import { CadRender } from './render/Render';
 import { Sidebar } from './sidebar/Sidebar';
 
 import { SIDEBAR_PERCENT } from './constants';
 import { useHistoryDoc } from './useHistoryDoc';
-
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import './App.css';
 

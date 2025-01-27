@@ -1,7 +1,7 @@
-import { Grid2, Input, InputAdornment, Slider, Switch, TextField, Tooltip, Typography } from '@mui/material';
+import { Grid2, Input, InputAdornment, Slider, Switch, Tooltip, Typography } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 
-import { FormInputConfig, FormObject } from './schema';
+import { FormInputConfig } from './schema';
 
 interface InputProps<T> {
   propName: string;

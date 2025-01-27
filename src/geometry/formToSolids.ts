@@ -1,11 +1,11 @@
 import { Geom3, Geometry } from '@jscad/modeling/src/geometries/types';
-import { cuboid, cylinder, roundedCuboid } from '@jscad/modeling/src/primitives';
+import { cuboid, roundedCuboid } from '@jscad/modeling/src/primitives';
 import { subtract, union } from '@jscad/modeling/src/operations/booleans';
 import { Vec3 } from '@jscad/modeling/src/maths/vec3';
 import { transforms } from '@jscad/modeling';
 
 import { FormObject } from '../form/schema';
-import { ff, ffA, ffO, vec3 } from '../utils';
+import { ff, ffO, vec3 } from '../utils';
 
 const NUM_SEGMENTS_PREVIEW = 2; // per corner
 const NUM_SEGMENTS_EXPORT = 16; // per corner
