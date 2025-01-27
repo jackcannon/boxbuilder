@@ -9,6 +9,34 @@ import { ff, ffO, vec3 } from '../utils';
 
 const NUM_SEGMENTS_PREVIEW = 2; // per corner
 const NUM_SEGMENTS_EXPORT = 16; // per corner
+const NUM_SEGMENTS_MAX = 64;
+const TARGET_RESOLUTION = 0.5;
+
+const calculateSegments = (isPreview: boolean = false, radius: number, resolution: number): number => {
+  if (isPreview) return NUM_SEGMENTS_PREVIEW * 4;
+
+  // remove this line if you want properly calculated segments
+  return NUM_SEGMENTS_EXPORT * 4;
+
+  const normalisedRadius = Math.max(0, Number(radius) || 0);
+  const normalisedResolution = Math.max(0, Number(resolution) || 0);
+
+  if (normalisedResolution === 0) return NUM_SEGMENTS_MAX;
+
+  const circumference: number = 2 * Math.PI * normalisedRadius;
+  const minSegments: number = Math.ceil(circumference / normalisedResolution);
+
+  return Math.min(minSegments, NUM_SEGMENTS_MAX);
+};
+
+const limitRadius = (roundRadius: number, xSize: number, ySize: number): number => {
+  let radius = roundRadius;
+  if (radius <= 0) return 0;
+  const minEdge = Math.min(xSize, ySize);
+  const maxRadius = minEdge / 2 - 0.01;
+  if (radius >= maxRadius) radius = maxRadius;
+  return radius;
+};
 
 const roundedCuboidSliced = (params: { size: Vec3; center?: Vec3; roundRadius?: number; segments?: number }): Geom3 => {
   const base: { size: Vec3; center: Vec3 } = {
@@ -18,10 +46,7 @@ const roundedCuboidSliced = (params: { size: Vec3; center?: Vec3; roundRadius?: 
 
   const segments = params.segments ?? NUM_SEGMENTS_PREVIEW;
 
-  let radius = params.roundRadius;
-  if (!radius || radius <= 0) return cuboid({ ...base });
-  const minEdge = Math.min(base.size[0], base.size[1]);
-  if (radius >= minEdge / 2) radius = minEdge / 2 - 0.01;
+  let radius = limitRadius(params.roundRadius ?? 0, base.size[0], base.size[1]);
   if (radius <= 0) return cuboid({ ...base });
 
   const { size, center } = base;
@@ -42,8 +67,6 @@ const roundedCuboidSliced = (params: { size: Vec3; center?: Vec3; roundRadius?: 
 };
 
 export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] => {
-  const segments = (isPreview ? NUM_SEGMENTS_PREVIEW : NUM_SEGMENTS_EXPORT) * 4;
-
   const gap = form.spacing / 2; // amount of spacing from centre for each part
   const lidThick = form.lidThickness;
   const lidDepth = form.lidDepth;
@@ -77,6 +100,14 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
     lidWallInner: -wllThick - wllThick - lidTol - lidTol - wllThick - wllThick,
     lidTopOuter: lidHang + lidHang
   });
+
+  // the limited radius of the lid top outer
+  const largestRadius = limitRadius(
+    Math.max(lidHang, radius + xyOffsets.lidTopOuter / 2),
+    width + xyOffsets.lidTopOuter,
+    depth + xyOffsets.lidTopOuter
+  );
+  const segments = calculateSegments(isPreview, largestRadius, TARGET_RESOLUTION);
 
   try {
     const geometry = [
