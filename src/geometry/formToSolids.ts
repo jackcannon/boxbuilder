@@ -5,12 +5,12 @@ import { Vec3 } from '@jscad/modeling/src/maths/vec3';
 import { transforms } from '@jscad/modeling';
 
 import { FormObject } from '../form/schema';
-import { ff, ffA, ffO } from '../utils';
+import { ff, ffA, ffO, vec3 } from '../utils';
 
-const NUM_SEGMENTS_PREVIEW = 8;
-const NUM_SEGMENTS_EXPORT = 64;
+const NUM_SEGMENTS_PREVIEW = 2; // per corner
+const NUM_SEGMENTS_EXPORT = 16; // per corner
 
-const roundedCuboidFlat = (params: { size: Vec3; center?: Vec3; roundRadius?: number; segments?: number }): Geom3 => {
+const roundedCuboidSliced = (params: { size: Vec3; center?: Vec3; roundRadius?: number; segments?: number }): Geom3 => {
   const base: { size: Vec3; center: Vec3 } = {
     size: params.size ?? [1, 1, 1],
     center: params.center ?? [0, 0, 0]
@@ -42,7 +42,7 @@ const roundedCuboidFlat = (params: { size: Vec3; center?: Vec3; roundRadius?: nu
 };
 
 export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] => {
-  const segments = isPreview ? NUM_SEGMENTS_PREVIEW : NUM_SEGMENTS_EXPORT;
+  const segments = (isPreview ? NUM_SEGMENTS_PREVIEW : NUM_SEGMENTS_EXPORT) * 4;
 
   const gap = form.spacing / 2; // amount of spacing from centre for each part
   const lidThick = form.lidThickness;
@@ -82,36 +82,32 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
     const geometry = [
       // the box
       transforms.translate(
-        ffA([
-          //
-          -width / 2 - gap,
-          0,
-          height / 2
-        ]),
+        vec3({
+          x: -width / 2 - gap,
+          y: 0,
+          z: height / 2
+        }),
         subtract(
-          roundedCuboidFlat({
-            size: ffA([
-              //
-              width + xyOffsets.boxOuter,
-              depth + xyOffsets.boxOuter,
-              height
-            ]),
+          roundedCuboidSliced({
+            size: vec3({
+              x: width + xyOffsets.boxOuter,
+              y: depth + xyOffsets.boxOuter,
+              z: height
+            }),
             roundRadius: radius + xyOffsets.boxOuter / 2,
             segments
           }),
-          roundedCuboidFlat({
-            size: ffA([
-              //
-              width + xyOffsets.boxInner,
-              depth + xyOffsets.boxInner,
-              height
-            ]),
-            center: ffA([
-              //
-              0,
-              0,
-              flrThick
-            ]),
+          roundedCuboidSliced({
+            size: vec3({
+              x: width + xyOffsets.boxInner,
+              y: depth + xyOffsets.boxInner,
+              z: height
+            }),
+            center: vec3({
+              x: 0,
+              y: 0,
+              z: flrThick
+            }),
             roundRadius: radius + xyOffsets.boxInner / 2,
             segments
           })
@@ -120,28 +116,25 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
 
       // the lid
       transforms.translate(
-        ffA([
-          //
-          width / 2 + lidHang + gap,
-          0,
-          lidThick
-        ]),
+        vec3({
+          x: width / 2 + lidHang + gap,
+          y: 0,
+          z: lidThick
+        }),
         union(
           subtract(
             // lid wall outer
-            roundedCuboidFlat({
-              size: ffA([
-                //
-                width + xyOffsets.lidWallOuter,
-                depth + xyOffsets.lidWallOuter,
-                lidDepth
-              ]),
-              center: ffA([
-                //
-                0,
-                0,
-                lidDepth / 2
-              ]),
+            roundedCuboidSliced({
+              size: vec3({
+                x: width + xyOffsets.lidWallOuter,
+                y: depth + xyOffsets.lidWallOuter,
+                z: lidDepth
+              }),
+              center: vec3({
+                x: 0,
+                y: 0,
+                z: lidDepth / 2
+              }),
               roundRadius: radius + xyOffsets.lidWallOuter / 2,
               segments
             }),
@@ -155,38 +148,34 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
                 return cuboid({ size: [0, 0, 0] });
               }
 
-              return roundedCuboidFlat({
-                size: [
-                  //
-                  cutWidth,
-                  cutDepth,
-                  100
-                ],
-                center: ffA([
-                  //
-                  0,
-                  0,
-                  -lidThick / 2 + lidDepth / 2
-                ]),
+              return roundedCuboidSliced({
+                size: vec3({
+                  x: cutWidth,
+                  y: cutDepth,
+                  z: 100
+                }),
+                center: vec3({
+                  x: 0,
+                  y: 0,
+                  z: -lidThick / 2 + lidDepth / 2
+                }),
                 roundRadius: radius + xyOffsets.lidWallInner / 2,
                 segments
               });
             })()
           ),
           // lid top
-          roundedCuboidFlat({
-            size: ffA([
-              //
-              width + xyOffsets.lidTopOuter,
-              depth + xyOffsets.lidTopOuter,
-              lidThick
-            ]),
-            center: ffA([
-              //
-              0,
-              0,
-              -lidThick / 2
-            ]),
+          roundedCuboidSliced({
+            size: vec3({
+              x: width + xyOffsets.lidTopOuter,
+              y: depth + xyOffsets.lidTopOuter,
+              z: lidThick
+            }),
+            center: vec3({
+              x: 0,
+              y: 0,
+              z: -lidThick / 2
+            }),
             // always rounds the corners of the lid to at least the lidOverhang
             roundRadius: Math.max(lidHang, radius + xyOffsets.lidTopOuter / 2),
             segments

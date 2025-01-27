@@ -1,4 +1,8 @@
+import { Vec3 } from '@jscad/modeling/src/maths/vec3';
+
 const powX = 1_000_000;
+
+export const vec3 = ({ x, y, z }: { x: number; y: number; z: number }): Vec3 => ffA([x, y, z]);
 
 // fixFloat
 export const ff = (num: number): number => Math.round(num * powX) / powX;
