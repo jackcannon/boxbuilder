@@ -1,4 +1,4 @@
-import { NUM_SEGMENTS_MAX_EXPORT, TARGET_RESOLUTION_EXPORT, TARGET_RESOLUTION_PREVIEW } from '../constants';
+import { NUM_SEGMENTS_MAX_EXPORT, NUM_SEGMENTS_MIN, TARGET_RESOLUTION_EXPORT, TARGET_RESOLUTION_PREVIEW } from '../constants';
 
 export const limitRadius = (roundRadius: number, xSize: number, ySize: number): number => {
   let radius = roundRadius;
@@ -20,7 +20,7 @@ export const calculateSegments = (isPreview: boolean = false, radius: number): n
   const circumference: number = 2 * Math.PI * normalisedRadius;
   const minSegments: number = Math.ceil(circumference / normalisedResolution);
 
-  let result = Math.max(8, Math.min(minSegments, NUM_SEGMENTS_MAX_EXPORT));
+  let result = Math.max(NUM_SEGMENTS_MIN, Math.min(minSegments, NUM_SEGMENTS_MAX_EXPORT));
   result = Math.ceil(result / 4) * 4; // round up to nearest 4
   return result;
 };

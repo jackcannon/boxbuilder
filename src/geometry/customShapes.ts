@@ -4,8 +4,7 @@ import { Vec3 } from '@jscad/modeling/src/maths/vec3';
 
 import { GET_DEBUG_TIMER } from '../utils';
 import { translate } from '@jscad/modeling/src/operations/transforms';
-import { limitRadius } from './geometryUtils';
-import { NUM_SEGMENTS_PREVIEW } from '../constants';
+import { calculateSegments, limitRadius } from './geometryUtils';
 import { extrudeLinear } from '@jscad/modeling/src/operations/extrusions';
 
 export const roundedCuboidExtruded = (params: { size: Vec3; center?: Vec3; roundRadius?: number; segments?: number }): Geom3 => {
@@ -15,7 +14,7 @@ export const roundedCuboidExtruded = (params: { size: Vec3; center?: Vec3; round
     center: params.center ?? [0, 0, 0]
   } as any;
 
-  const segments = params.segments ?? NUM_SEGMENTS_PREVIEW * 4;
+  const segments = params.segments ?? calculateSegments(true, params.roundRadius ?? 0);
 
   let radius = limitRadius(params.roundRadius ?? 0, base.size[0], base.size[1]);
   if (radius <= 0) return cuboid({ ...base });
