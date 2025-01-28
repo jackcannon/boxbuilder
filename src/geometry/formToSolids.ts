@@ -8,6 +8,8 @@ import { ff, ffA, ffO, vec3 } from '../utils';
 import { calculateSegments, limitRadius } from './geometryUtils';
 import { roundedCuboidExtruded } from './customShapes';
 import { Vec3 } from '@jscad/modeling/src/maths/vec3';
+import { colorize, hexToRgb } from '@jscad/modeling/src/colors';
+import { colours } from '../constants';
 
 type PartConfig = { size: Vec3; r: number };
 
@@ -79,7 +81,7 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
             lidTranslate: vec3({ x: 0, y: 0, z: height + lidTol + lidThick })
           })();
 
-    const geometry = [
+    let geometry = [
       // box
       transforms.translate(
         boxTranslate,
@@ -116,8 +118,8 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
               }),
               // lid wall inner (cutout)
               (() => {
-                // if the cutout is invalid, don't cut out anything
                 if (!form.lidCutout || sizes.lidWallInner.size[0] <= 0 || sizes.lidWallInner.size[1] <= 0) {
+                  // if the cutout is invalid, don't cut anything out
                   return cuboid({ size: [0, 0, 0] });
                 }
 
@@ -147,7 +149,11 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
       const center = vec3({ x: 0, y: -size[1] / 2, z: size[2] / 2 });
       const cutter = cuboid({ size, center });
 
-      return geometry.map((obj) => subtract(obj, cutter));
+      geometry = geometry.map((obj) => subtract(obj, cutter));
+    }
+
+    if (isPreview) {
+      geometry = geometry.map((obj, index) => colorize(hexToRgb(colours[index % colours.length]), obj));
     }
 
     return geometry;
