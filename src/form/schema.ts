@@ -135,9 +135,9 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     type: 'slider',
     displayName: 'Lid Overhang',
     description: 'How far should the lid protrude from the edge of the box',
-    defaultValue: 0,
+    defaultValue: 0.25,
     unit: 'mm',
-    sliderStep: 0.1,
+    sliderStep: 0.05,
     min: 0,
     max: 3
   },
