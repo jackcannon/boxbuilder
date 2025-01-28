@@ -7,6 +7,9 @@ import { FormObject } from '../form/schema';
 import { ff, ffO, vec3 } from '../utils';
 import { calculateSegments, limitRadius } from './geometryUtils';
 import { roundedCuboidExtruded } from './customShapes';
+import { Vec3 } from '@jscad/modeling/src/maths/vec3';
+
+type PartConfig = { size: Vec3; r: number };
 
 export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] => {
   const gap = form.spacing / 2; // amount of spacing from centre for each part
@@ -44,119 +47,102 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
     lidTopOuter: lidHang + lidHang
   });
 
+  const getPartConfig = (id: keyof typeof xyOffsets, z: number, r: number = radius + xyOffsets[id] / 2): PartConfig => ({
+    size: vec3({ x: width + xyOffsets[id], y: depth + xyOffsets[id], z }),
+    r
+  });
+  const sizes: { [K in keyof typeof xyOffsets]: PartConfig } = {
+    boxOuter: getPartConfig('boxOuter', height),
+    boxInner: getPartConfig('boxInner', height),
+    lidWallOuter: getPartConfig('lidWallOuter', lidDepth),
+    lidWallInner: getPartConfig('lidWallInner', height * 3),
+    lidTopOuter: getPartConfig('lidTopOuter', lidThick, Math.max(lidHang, radius + xyOffsets.lidTopOuter / 2))
+  };
+
   // the limited radius of the lid top outer
-  const largestRadius = limitRadius(
-    Math.max(lidHang, radius + xyOffsets.lidTopOuter / 2),
-    width + xyOffsets.lidTopOuter,
-    depth + xyOffsets.lidTopOuter
-  );
+  const largestRadius = limitRadius(sizes.lidTopOuter.r, sizes.lidTopOuter.size[0], sizes.lidTopOuter.size[1]);
   const segments = calculateSegments(isPreview, largestRadius);
 
   try {
-    const geometry = [
-      // the box
-      transforms.translate(
-        vec3({
-          x: -width / 2 - gap,
-          y: 0,
-          z: height / 2
+    let resultBox = transforms.translate(
+      vec3({
+        x: -width / 2 - gap,
+        y: 0,
+        z: height / 2
+      }),
+      subtract(
+        roundedCuboidExtruded({
+          size: sizes.boxOuter.size,
+          roundRadius: sizes.boxOuter.r,
+          segments
         }),
-        subtract(
-          roundedCuboidExtruded({
-            size: vec3({
-              x: width + xyOffsets.boxOuter,
-              y: depth + xyOffsets.boxOuter,
-              z: height
-            }),
-            roundRadius: radius + xyOffsets.boxOuter / 2,
-            segments
+        roundedCuboidExtruded({
+          size: sizes.boxInner.size,
+          center: vec3({
+            x: 0,
+            y: 0,
+            z: flrThick
           }),
+          roundRadius: sizes.boxInner.r,
+          segments
+        })
+      )
+    );
+
+    let resultLid = transforms.translate(
+      vec3({
+        x: width / 2 + lidHang + gap,
+        y: 0,
+        z: lidThick
+      }),
+      union(
+        subtract(
+          // lid wall outer
           roundedCuboidExtruded({
-            size: vec3({
-              x: width + xyOffsets.boxInner,
-              y: depth + xyOffsets.boxInner,
-              z: height
-            }),
+            size: sizes.lidWallOuter.size,
             center: vec3({
               x: 0,
               y: 0,
-              z: flrThick
+              z: lidDepth / 2
             }),
-            roundRadius: radius + xyOffsets.boxInner / 2,
+            roundRadius: sizes.lidWallOuter.r,
             segments
-          })
-        )
-      ),
+          }),
+          // lid wall inner (cutout)
+          (() => {
+            // if the cutout is invalid, don't cut out anything
+            if (!form.lidCutout || sizes.lidWallInner.size[0] <= 0 || sizes.lidWallInner.size[1] <= 0) {
+              return cuboid({ size: [0, 0, 0] });
+            }
 
-      // the lid
-      transforms.translate(
-        vec3({
-          x: width / 2 + lidHang + gap,
-          y: 0,
-          z: lidThick
-        }),
-        union(
-          subtract(
-            // lid wall outer
-            roundedCuboidExtruded({
-              size: vec3({
-                x: width + xyOffsets.lidWallOuter,
-                y: depth + xyOffsets.lidWallOuter,
-                z: lidDepth
-              }),
+            return roundedCuboidExtruded({
+              size: sizes.lidWallInner.size,
               center: vec3({
                 x: 0,
                 y: 0,
-                z: lidDepth / 2
+                z: -lidThick / 2 + lidDepth / 2
               }),
-              roundRadius: radius + xyOffsets.lidWallOuter / 2,
+              roundRadius: sizes.lidWallInner.r,
               segments
-            }),
-            // lid wall inner (cutout)
-            (() => {
-              const cutWidth = ff(width + xyOffsets.lidWallInner);
-              const cutDepth = ff(depth + xyOffsets.lidWallInner);
-
-              // if the cutout is invalid, don't cut out anything
-              if (!form.lidCutout || cutWidth <= 0 || cutDepth <= 0) {
-                return cuboid({ size: [0, 0, 0] });
-              }
-
-              return roundedCuboidExtruded({
-                size: vec3({
-                  x: cutWidth,
-                  y: cutDepth,
-                  z: 100
-                }),
-                center: vec3({
-                  x: 0,
-                  y: 0,
-                  z: -lidThick / 2 + lidDepth / 2
-                }),
-                roundRadius: radius + xyOffsets.lidWallInner / 2,
-                segments
-              });
-            })()
-          ),
-          // lid top
-          roundedCuboidExtruded({
-            size: vec3({
-              x: width + xyOffsets.lidTopOuter,
-              y: depth + xyOffsets.lidTopOuter,
-              z: lidThick
-            }),
-            center: vec3({
-              x: 0,
-              y: 0,
-              z: -lidThick / 2
-            }),
-            // always rounds the corners of the lid to at least the lidOverhang
-            roundRadius: Math.max(lidHang, radius + xyOffsets.lidTopOuter / 2),
-            segments
-          })
-        )
+            });
+          })()
+        ),
+        // lid top outer
+        roundedCuboidExtruded({
+          size: sizes.lidTopOuter.size,
+          center: vec3({
+            x: 0,
+            y: 0,
+            z: -lidThick / 2
+          }),
+          // always rounds the corners of the lid to at least the lidOverhang
+          roundRadius: Math.max(lidHang, sizes.lidTopOuter.r),
+          segments
+        })
       )
-    ];
+    );
+
+    const geometry = [resultBox, resultLid];
     return geometry;
   } catch (e) {
     console.log(e);
