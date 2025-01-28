@@ -1,70 +1,12 @@
-import { Geom3, Geometry } from '@jscad/modeling/src/geometries/types';
-import { cuboid, roundedCuboid } from '@jscad/modeling/src/primitives';
+import { Geometry } from '@jscad/modeling/src/geometries/types';
+import { cuboid } from '@jscad/modeling/src/primitives';
 import { subtract, union } from '@jscad/modeling/src/operations/booleans';
-import { Vec3 } from '@jscad/modeling/src/maths/vec3';
 import { transforms } from '@jscad/modeling';
 
 import { FormObject } from '../form/schema';
 import { ff, ffO, vec3 } from '../utils';
-
-const NUM_SEGMENTS_PREVIEW = 2; // per corner
-const NUM_SEGMENTS_EXPORT = 16; // per corner
-const NUM_SEGMENTS_MAX = 64;
-const TARGET_RESOLUTION = 0.5;
-
-const calculateSegments = (isPreview: boolean = false, radius: number, resolution: number): number => {
-  if (isPreview) return NUM_SEGMENTS_PREVIEW * 4;
-
-  // remove this line if you want properly calculated segments
-  return NUM_SEGMENTS_EXPORT * 4;
-
-  const normalisedRadius = Math.max(0, Number(radius) || 0);
-  const normalisedResolution = Math.max(0, Number(resolution) || 0);
-
-  if (normalisedResolution === 0) return NUM_SEGMENTS_MAX;
-
-  const circumference: number = 2 * Math.PI * normalisedRadius;
-  const minSegments: number = Math.ceil(circumference / normalisedResolution);
-
-  return Math.min(minSegments, NUM_SEGMENTS_MAX);
-};
-
-const limitRadius = (roundRadius: number, xSize: number, ySize: number): number => {
-  let radius = roundRadius;
-  if (radius <= 0) return 0;
-  const minEdge = Math.min(xSize, ySize);
-  const maxRadius = minEdge / 2 - 0.01;
-  if (radius >= maxRadius) radius = maxRadius;
-  return radius;
-};
-
-const roundedCuboidSliced = (params: { size: Vec3; center?: Vec3; roundRadius?: number; segments?: number }): Geom3 => {
-  const base: { size: Vec3; center: Vec3 } = {
-    size: params.size ?? [1, 1, 1],
-    center: params.center ?? [0, 0, 0]
-  } as any;
-
-  const segments = params.segments ?? NUM_SEGMENTS_PREVIEW;
-
-  let radius = limitRadius(params.roundRadius ?? 0, base.size[0], base.size[1]);
-  if (radius <= 0) return cuboid({ ...base });
-
-  const { size, center } = base;
-
-  const cutSize = [size[0] + 1, size[1] + 1, size[2] + radius + radius + 2] as Vec3;
-  const cutCenterZOffset = size[2] / 2 + cutSize[2] / 2;
-
-  return subtract(
-    roundedCuboid({
-      ...base,
-      size: [size[0], size[1], size[2] + radius + radius] as Vec3,
-      roundRadius: radius,
-      segments
-    }),
-    cuboid({ size: cutSize, center: [center[0], center[1], center[2] + cutCenterZOffset] as Vec3 }),
-    cuboid({ size: cutSize, center: [center[0], center[1], center[2] - cutCenterZOffset] as Vec3 })
-  );
-};
+import { calculateSegments, limitRadius } from './geometryUtils';
+import { roundedCuboidCustom } from './customShapes';
 
 export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] => {
   const gap = form.spacing / 2; // amount of spacing from centre for each part
@@ -108,7 +50,7 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
     width + xyOffsets.lidTopOuter,
     depth + xyOffsets.lidTopOuter
   );
-  const segments = calculateSegments(isPreview, largestRadius, TARGET_RESOLUTION);
+  const segments = calculateSegments(isPreview, largestRadius);
 
   try {
     const geometry = [
@@ -120,7 +62,7 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
           z: height / 2
         }),
         subtract(
-          roundedCuboidSliced({
+          roundedCuboidCustom({
             size: vec3({
               x: width + xyOffsets.boxOuter,
               y: depth + xyOffsets.boxOuter,
@@ -129,7 +71,7 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
             roundRadius: radius + xyOffsets.boxOuter / 2,
             segments
           }),
-          roundedCuboidSliced({
+          roundedCuboidCustom({
             size: vec3({
               x: width + xyOffsets.boxInner,
               y: depth + xyOffsets.boxInner,
@@ -156,7 +98,7 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
         union(
           subtract(
             // lid wall outer
-            roundedCuboidSliced({
+            roundedCuboidCustom({
               size: vec3({
                 x: width + xyOffsets.lidWallOuter,
                 y: depth + xyOffsets.lidWallOuter,
@@ -180,7 +122,7 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
                 return cuboid({ size: [0, 0, 0] });
               }
 
-              return roundedCuboidSliced({
+              return roundedCuboidCustom({
                 size: vec3({
                   x: cutWidth,
                   y: cutDepth,
@@ -197,7 +139,7 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
             })()
           ),
           // lid top
-          roundedCuboidSliced({
+          roundedCuboidCustom({
             size: vec3({
               x: width + xyOffsets.lidTopOuter,
               y: depth + xyOffsets.lidTopOuter,

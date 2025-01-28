@@ -7,6 +7,7 @@ import { formToSolids } from '../geometry/formToSolids';
 
 import { useWindowSize } from './useWindowSize';
 import { SIDEBAR_PERCENT } from '../constants';
+import { GET_DEBUG_TIMER } from '../utils';
 
 import './render.css';
 
@@ -16,7 +17,9 @@ interface Props {
 }
 
 const CadRenderComponent = ({ style, form }: Props) => {
+  const DEBUG_TIMER = GET_DEBUG_TIMER('formToSolids - CadRender');
   const solids = formToSolids(form, true);
+  DEBUG_TIMER.stop();
   const [width, height] = useWindowSize();
 
   const sectionRatio = (100 - SIDEBAR_PERCENT) / 100;
