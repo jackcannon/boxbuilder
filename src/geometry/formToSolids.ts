@@ -4,12 +4,15 @@ import { subtract, union } from '@jscad/modeling/src/operations/booleans';
 import { transforms } from '@jscad/modeling';
 
 import { FormObject } from '../form/schema';
-import { ff, ffO, vec3 } from '../utils';
+import { ff, ffA, ffO, vec3 } from '../utils';
 import { calculateSegments, limitRadius } from './geometryUtils';
 import { roundedCuboidExtruded } from './customShapes';
 import { Vec3 } from '@jscad/modeling/src/maths/vec3';
 
 type PartConfig = { size: Vec3; r: number };
+
+const isPrintInPlace = true;
+const isCrossSection = false;
 
 export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] => {
   const gap = form.spacing / 2; // amount of spacing from centre for each part
@@ -34,7 +37,7 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
   const width = isOuter ? form.width : form.width + wllThick + wllThick;
   const depth = isOuter ? form.depth : form.depth + wllThick + wllThick;
   const lidCutoutOffset = form.lidCutout ? 0 : lidDepth;
-  const height = isOuter ? form.height - lidThick : form.height + flrThick + lidCutoutOffset;
+  const height = isOuter ? form.height - lidThick - lidTol : form.height + flrThick + lidCutoutOffset - lidTol;
   const cornerRadius = form.cornerRadius <= 0 ? -wllThick : form.cornerRadius; // if 0, dont ever round corners
   const radius = isOuter ? cornerRadius : cornerRadius + wllThick;
 
@@ -64,85 +67,92 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
   const segments = calculateSegments(isPreview, largestRadius);
 
   try {
-    let resultBox = transforms.translate(
-      vec3({
-        x: -width / 2 - gap,
-        y: 0,
-        z: height / 2
-      }),
-      subtract(
-        roundedCuboidExtruded({
-          size: sizes.boxOuter.size,
-          roundRadius: sizes.boxOuter.r,
-          segments
-        }),
-        roundedCuboidExtruded({
-          size: sizes.boxInner.size,
-          center: vec3({
-            x: 0,
-            y: 0,
-            z: flrThick
-          }),
-          roundRadius: sizes.boxInner.r,
-          segments
-        })
-      )
-    );
+    const { boxTranslate, lidRotate, lidTranslate } = (() =>
+      isPrintInPlace
+        ? {
+            // transforms for print in place
+            boxTranslate: vec3({ x: -width / 2 - gap, y: 0, z: 0 }),
+            lidRotate: [0, 0, 0] as Vec3,
+            lidTranslate: vec3({ x: width / 2 + lidHang + gap, y: 0, z: 0 })
+          }
+        : {
+            // transforms for 'joined' (lid sits on top)
+            boxTranslate: vec3({ x: 0, y: 0, z: 0 }),
+            lidRotate: [0, Math.PI, 0] as Vec3,
+            lidTranslate: vec3({ x: 0, y: 0, z: height + lidTol + lidThick })
+          })();
 
-    let resultLid = transforms.translate(
-      vec3({
-        x: width / 2 + lidHang + gap,
-        y: 0,
-        z: lidThick
-      }),
-      union(
+    const geometry = [
+      // box
+      transforms.translate(
+        boxTranslate,
         subtract(
-          // lid wall outer
+          // box outer
           roundedCuboidExtruded({
-            size: sizes.lidWallOuter.size,
-            center: vec3({
-              x: 0,
-              y: 0,
-              z: lidDepth / 2
-            }),
-            roundRadius: sizes.lidWallOuter.r,
+            size: sizes.boxOuter.size,
+            roundRadius: sizes.boxOuter.r,
+            segments,
+            center: vec3({ x: 0, y: 0, z: height / 2 })
+          }),
+          // box inner
+          roundedCuboidExtruded({
+            size: sizes.boxInner.size,
+            center: vec3({ x: 0, y: 0, z: height / 2 + flrThick }),
+            roundRadius: sizes.boxInner.r,
             segments
-          }),
-          // lid wall inner (cutout)
-          (() => {
-            // if the cutout is invalid, don't cut out anything
-            if (!form.lidCutout || sizes.lidWallInner.size[0] <= 0 || sizes.lidWallInner.size[1] <= 0) {
-              return cuboid({ size: [0, 0, 0] });
-            }
-
-            return roundedCuboidExtruded({
-              size: sizes.lidWallInner.size,
-              center: vec3({
-                x: 0,
-                y: 0,
-                z: -lidThick / 2 + lidDepth / 2
+          })
+        )
+      ),
+      // lid
+      transforms.translate(
+        lidTranslate,
+        transforms.rotate(
+          lidRotate,
+          union(
+            subtract(
+              // lid wall outer
+              roundedCuboidExtruded({
+                size: sizes.lidWallOuter.size,
+                center: vec3({ x: 0, y: 0, z: lidThick + lidDepth / 2 }),
+                roundRadius: sizes.lidWallOuter.r,
+                segments
               }),
-              roundRadius: sizes.lidWallInner.r,
-              segments
-            });
-          })()
-        ),
-        // lid top outer
-        roundedCuboidExtruded({
-          size: sizes.lidTopOuter.size,
-          center: vec3({
-            x: 0,
-            y: 0,
-            z: -lidThick / 2
-          }),
-          // always rounds the corners of the lid to at least the lidOverhang
-          roundRadius: Math.max(lidHang, sizes.lidTopOuter.r),
-          segments
-        })
-      )
-    );
+              // lid wall inner (cutout)
+              (() => {
+                // if the cutout is invalid, don't cut out anything
+                if (!form.lidCutout || sizes.lidWallInner.size[0] <= 0 || sizes.lidWallInner.size[1] <= 0) {
+                  return cuboid({ size: [0, 0, 0] });
+                }
 
-    const geometry = [resultBox, resultLid];
+                return roundedCuboidExtruded({
+                  size: sizes.lidWallInner.size,
+                  center: vec3({ x: 0, y: 0, z: lidThick / 2 + lidDepth / 2 }),
+                  roundRadius: sizes.lidWallInner.r,
+                  segments
+                });
+              })()
+            ),
+            // lid top
+            roundedCuboidExtruded({
+              size: sizes.lidTopOuter.size,
+              center: vec3({ x: 0, y: 0, z: lidThick / 2 }),
+              // always rounds the corners of the lid to at least the lidOverhang
+              roundRadius: Math.max(lidHang, sizes.lidTopOuter.r),
+              segments
+            })
+          )
+        )
+      )
+    ];
+
+    if (isCrossSection) {
+      const size = vec3({ x: gap * 2 + width * 3, y: gap * 2 + depth * 3, z: height * 3 });
+      const center = vec3({ x: 0, y: -size[1] / 2, z: size[2] / 2 });
+      const cutter = cuboid({ size, center });
+
+      return geometry.map((obj) => subtract(obj, cutter));
+    }
+
     return geometry;
   } catch (e) {
     console.log(e);

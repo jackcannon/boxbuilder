@@ -147,6 +147,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     defaultValue: 0.06,
     unit: 'mm',
     sliderStep: 0.01,
+    min: 0,
     max: 1
   },
   spacing: {
