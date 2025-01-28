@@ -6,7 +6,7 @@ import { transforms } from '@jscad/modeling';
 import { FormObject } from '../form/schema';
 import { ff, ffO, vec3 } from '../utils';
 import { calculateSegments, limitRadius } from './geometryUtils';
-import { roundedCuboidCustom } from './customShapes';
+import { roundedCuboidExtruded } from './customShapes';
 
 export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] => {
   const gap = form.spacing / 2; // amount of spacing from centre for each part
@@ -62,7 +62,7 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
           z: height / 2
         }),
         subtract(
-          roundedCuboidCustom({
+          roundedCuboidExtruded({
             size: vec3({
               x: width + xyOffsets.boxOuter,
               y: depth + xyOffsets.boxOuter,
@@ -71,7 +71,7 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
             roundRadius: radius + xyOffsets.boxOuter / 2,
             segments
           }),
-          roundedCuboidCustom({
+          roundedCuboidExtruded({
             size: vec3({
               x: width + xyOffsets.boxInner,
               y: depth + xyOffsets.boxInner,
@@ -98,7 +98,7 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
         union(
           subtract(
             // lid wall outer
-            roundedCuboidCustom({
+            roundedCuboidExtruded({
               size: vec3({
                 x: width + xyOffsets.lidWallOuter,
                 y: depth + xyOffsets.lidWallOuter,
@@ -122,7 +122,7 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
                 return cuboid({ size: [0, 0, 0] });
               }
 
-              return roundedCuboidCustom({
+              return roundedCuboidExtruded({
                 size: vec3({
                   x: cutWidth,
                   y: cutDepth,
@@ -139,7 +139,7 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
             })()
           ),
           // lid top
-          roundedCuboidCustom({
+          roundedCuboidExtruded({
             size: vec3({
               x: width + xyOffsets.lidTopOuter,
               y: depth + xyOffsets.lidTopOuter,

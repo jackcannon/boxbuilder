@@ -9,8 +9,6 @@ export const limitRadius = (roundRadius: number, xSize: number, ySize: number): 
   return radius;
 };
 
-export const boolToDir = (bool: boolean): number => Number(bool) * 2 - 1;
-
 export const calculateSegments = (isPreview: boolean = false, radius: number): number => {
   const resolution = isPreview ? TARGET_RESOLUTION_PREVIEW : TARGET_RESOLUTION_EXPORT;
 
