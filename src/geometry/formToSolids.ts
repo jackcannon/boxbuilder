@@ -11,9 +11,6 @@ import { Vec3 } from '@jscad/modeling/src/maths/vec3';
 
 type PartConfig = { size: Vec3; r: number };
 
-const isPrintInPlace = true;
-const isCrossSection = false;
-
 export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] => {
   const gap = form.spacing / 2; // amount of spacing from centre for each part
   const lidThick = form.lidThickness;
@@ -68,7 +65,7 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
 
   try {
     const { boxTranslate, lidRotate, lidTranslate } = (() =>
-      isPrintInPlace
+      form.isPrintMode
         ? {
             // transforms for print in place
             boxTranslate: vec3({ x: -width / 2 - gap, y: 0, z: 0 }),
@@ -145,7 +142,7 @@ export const formToSolids = (form: FormObject, isPreview: boolean): Geometry[] =
       )
     ];
 
-    if (isCrossSection) {
+    if (form.isCrossSectionMode && isPreview) {
       const size = vec3({ x: gap * 2 + width * 3, y: gap * 2 + depth * 3, z: height * 3 });
       const center = vec3({ x: 0, y: -size[1] / 2, z: size[2] / 2 });
       const cutter = cuboid({ size, center });

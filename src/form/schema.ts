@@ -13,6 +13,8 @@ export const FormSchema = z.object({
   lidOverhang: z.number().min(0),
   lidTolerance: z.number().min(0.01),
   spacing: z.number().min(0.01),
+  isPrintMode: z.boolean(),
+  isCrossSectionMode: z.boolean(),
   fileName: z.string().min(1)
 });
 
@@ -154,11 +156,25 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     paramName: 'sp',
     type: 'slider',
     displayName: 'Spacing',
-    description: 'How much space between the parts',
+    description: 'How much space between the parts. Only used in print in place mode',
     defaultValue: 5,
     unit: 'mm',
     sliderStep: 0.5,
     max: 10
+  },
+  isPrintMode: {
+    paramName: 'md_p',
+    type: 'boolean',
+    displayName: 'Print Ready',
+    description: 'Should the parts be oriented in a ready to print position?',
+    defaultValue: true
+  },
+  isCrossSectionMode: {
+    paramName: 'md_cs',
+    type: 'boolean',
+    displayName: 'Show Cross Section',
+    description: 'Cut away a cross section of the model to see inside',
+    defaultValue: false
   },
   fileName: {
     paramName: 'fn',

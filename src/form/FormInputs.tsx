@@ -129,7 +129,7 @@ export const FormInputSwitch = <T extends unknown>({ propName, config, value, on
 };
 export const FormInputBoolean = <T extends unknown>({ propName, config, value, onChange }: InputProps<T>) => {
   return (
-    <Grid2 container flex={1} flexGrow={1} justifyContent="center" alignItems="center">
+    <Grid2 container flex={1} flexGrow={1} justifyContent="flex-start" alignItems="center">
       <Checkbox
         checked={Boolean(value)}
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChange(Boolean(event.target.checked) as T)}
@@ -142,6 +142,11 @@ export const FormInputBoolean = <T extends unknown>({ propName, config, value, o
 
 export const FormInput = <T extends unknown>(props: InputProps<T>) => {
   const { propName, config, value, onChange } = props;
+
+  let width = '100%';
+  if (['boolean'].includes(config.type)) {
+    width = '50%';
+  }
 
   const section = () => {
     switch (props.config.type) {
@@ -161,7 +166,7 @@ export const FormInput = <T extends unknown>(props: InputProps<T>) => {
   };
 
   return (
-    <Grid2 container spacing={0} sx={{ alignItems: 'center', margin: '0 0.25em 0.75em' }}>
+    <Grid2 container spacing={0} sx={{ alignItems: 'center', padding: '0 0.25em 0.75em', width }}>
       <Grid2 sx={{ width: '100%' }}>
         <Typography variant="body2" id={`input-slider-${propName}`}>
           {config.displayName}{' '}
@@ -170,17 +175,10 @@ export const FormInput = <T extends unknown>(props: InputProps<T>) => {
               config.warning ? (
                 <>
                   <div>{config.description}</div>
-                  {
-                    <>
-                      <br />
-                      <Typography sx={{ fontSize: '0.9em' }}>
-                        <b>
-                          <em>Warning!</em>
-                        </b>{' '}
-                        {config.warning}
-                      </Typography>
-                    </>
-                  }
+                  <br />
+                  <Typography sx={{ fontSize: '0.9em' }}>
+                    <span style={{ fontWeight: 'bold', fontStyle: 'italic' }}>Warning!</span> {config.warning}
+                  </Typography>
                 </>
               ) : (
                 config.description

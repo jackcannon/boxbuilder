@@ -1,5 +1,9 @@
 .form {
   width: calc(100% - 2em);
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 /* Media query - smaller screen */
