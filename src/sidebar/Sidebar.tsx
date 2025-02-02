@@ -23,7 +23,7 @@ export const Sidebar = ({ style, form, setForm }: Props) => {
 
       <Form object={form} schema={FormSchema} onChange={setForm} />
 
-      <pre>{JSON.stringify(form, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(form, null, 2)}</pre> */}
 
       <div>
         <Button variant="contained" color="primary" onClick={() => exportSTL(form, form.fileName)}>

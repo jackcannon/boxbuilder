@@ -13,13 +13,7 @@ import { colours } from '../constants';
 import { ArrayTools } from 'swiss-ak';
 
 type PartConfig = { size: CVec3; r: number };
-
 type CalcedVariables = ReturnType<typeof calculateVariables>;
-
-// const form_sectionsAcross = 3;
-// const form_sectionsDeep = 3;
-// const form_internalWallThickness = 1;
-// const form_dimensionType = 0; // 0 = section, 1 = inner, 2 = outer
 
 enum DimensionType {
   SECTION = 0,
@@ -104,7 +98,8 @@ const calculateVariables = (form: FormObject, isPreview: boolean) => {
 
   // internal walls
   const boxInner = sizes.boxInner.size;
-  const intWallHeight = height - flrThick - lidDepth - lidTol;
+  const maxIntWallHeight = height - flrThick - lidDepth - lidTol;
+  const intWallHeight = Math.min(maxIntWallHeight, form.internalWallHeight);
   const internalWalls: CuboidOptions[] = [
     // x
     ...ArrayTools.range(sectAcross - 1).map((i) => {

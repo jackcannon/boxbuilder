@@ -2,17 +2,18 @@ import z from 'zod';
 import { dimensionTypeConfigs } from './dimensionTypes';
 
 export const FormSchema = z.object({
+  dimensionType: z.number().int().min(0).max(2),
   width: z.number().min(0.01),
   depth: z.number().min(0.01),
   height: z.number().min(0.01),
   cornerRadius: z.number().min(0),
-  dimensionType: z.number().int().min(0).max(2),
+  wallThickness: z.number().min(0.01),
 
   sectionsAcross: z.number().int().min(1),
   sectionsDeep: z.number().int().min(1),
+  internalWallHeight: z.number().min(0.01),
   internalWallThickness: z.number().min(0.01),
 
-  wallThickness: z.number().min(0.01),
   lidThickness: z.number().min(0.01),
   lidDepth: z.number().min(0.01),
   lidCutout: z.boolean(),
@@ -37,6 +38,7 @@ export interface FormInputConfig {
   displayName: string;
   description: string;
   warning?: string; // warning message to display with the description
+  note?: string; // note message to display with the description
   defaultValue: any;
   unit?: string;
   sliderStep?: number; // slider step/increment value
@@ -49,6 +51,14 @@ export interface FormInputConfig {
 }
 
 export const formConfig: { [K in FormPropName]: FormInputConfig } = {
+  dimensionType: {
+    paramName: 'dt',
+    type: 'toggle_button',
+    displayName: 'Dimension Type',
+    description: 'What do the width/height/depth define?',
+    defaultValue: 2,
+    options: dimensionTypeConfigs
+  },
   width: {
     paramName: 'w',
     type: 'slider',
@@ -94,14 +104,16 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     min: 0,
     max: 10
   },
-
-  dimensionType: {
-    paramName: 'dt',
-    type: 'toggle_button',
-    displayName: 'Dimension Type',
-    description: 'What do the width/height/depth define?',
-    defaultValue: 2,
-    options: dimensionTypeConfigs
+  wallThickness: {
+    paramName: 'wl_th',
+    type: 'slider',
+    displayName: 'Wall Thickness',
+    description: 'Thickness of the box walls',
+    defaultValue: 1.5,
+    unit: 'mm',
+    sliderStep: 0.1,
+    inputStep: 0.05,
+    max: 5
   },
 
   sectionsAcross: {
@@ -124,27 +136,30 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     min: 1,
     max: 5
   },
+  internalWallHeight: {
+    paramName: 's_h',
+    type: 'slider',
+    displayName: 'Internal Wall Height',
+    description: 'Height of the compartment walls',
+    note: 'Limited to make sure the lid fits',
+    defaultValue: 100,
+    unit: 'mm',
+    sliderStep: 1,
+    inputStep: 0.25,
+    max: 100
+  },
   internalWallThickness: {
-    paramName: 'wl_th_i',
+    paramName: 's_wl_th',
     type: 'slider',
     displayName: 'Internal Wall Thickness',
     description: 'Thickness of the compartment walls',
     defaultValue: 1,
     unit: 'mm',
     sliderStep: 0.1,
+    inputStep: 0.05,
     max: 5
   },
 
-  wallThickness: {
-    paramName: 'wl_th',
-    type: 'slider',
-    displayName: 'Wall Thickness',
-    description: 'Thickness of the box walls',
-    defaultValue: 1.5,
-    unit: 'mm',
-    sliderStep: 0.1,
-    max: 5
-  },
   lidThickness: {
     paramName: 'ld_th',
     type: 'slider',
@@ -231,11 +246,11 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
 export const formGroups: (FormPropName[] | FormPropName)[] = [
   [
     //
+    'dimensionType',
     'width',
     'depth',
     'height',
     'cornerRadius',
-    'dimensionType',
     'wallThickness'
   ],
 
@@ -243,6 +258,7 @@ export const formGroups: (FormPropName[] | FormPropName)[] = [
     //
     'sectionsAcross',
     'sectionsDeep',
+    'internalWallHeight',
     'internalWallThickness'
   ],
 

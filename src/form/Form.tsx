@@ -25,8 +25,8 @@ export const Form = ({ schema, object, onChange }: Props) => {
         if (typeof group === 'string') return getIndividualFormItem(group as FormPropName);
 
         return (
-          <Grid2 container sx={{ width: '100%' }}>
-            <Paper key={`group-${index + 1}`} sx={{ width: '100%', padding: '0.6em 0em 0.1em', display: 'flex', justifyContent: 'center' }}>
+          <Grid2 key={`group-${index + 1}`} container sx={{ width: '100%' }}>
+            <Paper sx={{ width: '100%', padding: '0.6em 0em 0.1em', display: 'flex', justifyContent: 'center' }}>
               <Grid2 container spacing={1} direction="row" wrap="wrap" justifyContent="flex-start" sx={{ width: 'calc(100% - 1em)' }}>
                 {group.map((key) => getIndividualFormItem(key))}
               </Grid2>

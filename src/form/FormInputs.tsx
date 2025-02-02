@@ -150,7 +150,7 @@ export const FormInputToggleButton = <T extends unknown>({ propName, config, val
         sx={{ marginTop: '0.25em' }}
       >
         {config.options?.map((opt) => (
-          <ToggleButton value={opt.value} sx={{ textTransform: 'none', padding: '0.5em 1em' }}>
+          <ToggleButton key={opt.value} value={opt.value} sx={{ textTransform: 'none', padding: '0.5em 1em' }}>
             {opt.label}
           </ToggleButton>
         ))}
@@ -193,13 +193,20 @@ export const FormInput = <T extends unknown>(props: InputProps<T>) => {
           {config.displayName}{' '}
           <Tooltip
             title={
-              config.warning ? (
+              config.warning || config.note ? (
                 <>
                   <div>{config.description}</div>
                   <br />
-                  <Typography sx={{ fontSize: '0.9em' }}>
-                    <span style={{ fontWeight: 'bold', fontStyle: 'italic' }}>Warning!</span> {config.warning}
-                  </Typography>
+                  {config.warning && (
+                    <Typography sx={{ fontSize: '0.9em' }}>
+                      <span style={{ fontWeight: 'bold', fontStyle: 'italic' }}>Warning!</span> {config.warning}
+                    </Typography>
+                  )}
+                  {config.note && (
+                    <Typography sx={{ fontSize: '0.9em' }}>
+                      <span style={{ fontWeight: 'bold', fontStyle: 'italic' }}>Note:</span> {config.note}
+                    </Typography>
+                  )}
                 </>
               ) : (
                 config.description

@@ -33,7 +33,7 @@ const queryToObject = (query: string, defaultValues: FormObject): FormObject => 
     if (!config) continue;
 
     let parsedValue: any = value;
-    if (['number', 'slider'].includes(config.type)) {
+    if (['number', 'slider', 'toggle_button'].includes(config.type)) {
       parsedValue = parseFloat(value);
     }
     if (['switch', 'boolean'].includes(config.type)) {
