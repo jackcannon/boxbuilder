@@ -1,6 +1,6 @@
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-import { FormSchema, defaultForm } from './form/schema';
+import { FormSchema, defaultFormObj } from './form/schema';
 import { CadRender } from './render/Render';
 import { Sidebar } from './sidebar/Sidebar';
 
@@ -20,7 +20,7 @@ const getStyle = (percent: number) => ({
 });
 
 const App = () => {
-  const [form, setForm] = useHistoryDoc(FormSchema, defaultForm);
+  const [form, setForm] = useHistoryDoc(FormSchema, defaultFormObj);
 
   const sidebarSize = SIDEBAR_PERCENT;
   const renderSize = 100 - SIDEBAR_PERCENT;

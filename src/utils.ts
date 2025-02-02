@@ -3,7 +3,15 @@ import { IS_DEBUG } from './constants';
 
 const powX = 1_000_000;
 
-export const vec3 = ({ x, y, z }: { x: number; y: number; z: number }): Vec3 => ffA([x, y, z]);
+export type CVec3 = Vec3 & { x: number; y: number; z: number };
+
+export const vec3 = ({ x, y, z }: { x: number; y: number; z: number }): CVec3 => {
+  const arr: any = ffA([x, y, z]);
+  arr.x = arr[0];
+  arr.y = arr[1];
+  arr.z = arr[2];
+  return arr;
+};
 
 // fixFloat
 export const ff = (num: number): number => Math.round(num * powX) / powX;

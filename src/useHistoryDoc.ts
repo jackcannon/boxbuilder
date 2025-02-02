@@ -1,11 +1,12 @@
 import { ZodSchema } from 'zod';
 import { useEffect, useState } from 'react';
-import { formConfig, FormObject } from './form/schema';
+import { formConfig, FormObject, FormPropName } from './form/schema';
+import { DimensionType } from './form/dimensionTypes';
 
 const paramNameDictionary = Object.fromEntries(Object.entries(formConfig).map(([key, value]) => [value.paramName, key]));
 
 const queryToObject = (query: string, defaultValues: FormObject): FormObject => {
-  const { data: dataParam, ...params } = Object.fromEntries(new URLSearchParams(query));
+  const { data: dataParam, is_outer: isOuterParam, ...params } = Object.fromEntries(new URLSearchParams(query));
 
   let result: FormObject = { ...defaultValues };
 
@@ -19,11 +20,16 @@ const queryToObject = (query: string, defaultValues: FormObject): FormObject => 
     }
   }
 
+  // old version of the app used is_outer param instead of dimensionType
+  if (isOuterParam !== undefined) {
+    result.dimensionType = Boolean(Number(isOuterParam)) ? DimensionType.OUTER : DimensionType.INNER;
+  }
+
   for (const [paramName, value] of Object.entries(params)) {
     const key = paramNameDictionary[paramName];
     if (!key) continue;
 
-    const config = formConfig[key as keyof FormObject];
+    const config = formConfig[key as FormPropName];
     if (!config) continue;
 
     let parsedValue: any = value;
@@ -46,7 +52,7 @@ const objectToQuery = (obj: FormObject): string => {
   const params = new URLSearchParams();
 
   for (const [key, value] of Object.entries(obj)) {
-    const config = formConfig[key as keyof FormObject];
+    const config = formConfig[key as FormPropName];
 
     let valueStr = value.toString();
     if (['switch', 'boolean'].includes(config.type)) {
@@ -64,6 +70,7 @@ const initialise = <T>(schema: ZodSchema, backup: object): T => {
   try {
     let query = window.location.search;
     const parsed = queryToObject(query, startForm);
+    console.log('parsed', parsed);
     const data = schema.parse(parsed);
     return data;
   } catch (e) {

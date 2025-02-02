@@ -1,27 +1,36 @@
 import z from 'zod';
+import { dimensionTypeConfigs } from './dimensionTypes';
 
 export const FormSchema = z.object({
   width: z.number().min(0.01),
-  height: z.number().min(0.01),
   depth: z.number().min(0.01),
+  height: z.number().min(0.01),
   cornerRadius: z.number().min(0),
-  isOuterDimensions: z.boolean(),
+  dimensionType: z.number().int().min(0).max(2),
+
+  sectionsAcross: z.number().int().min(1),
+  sectionsDeep: z.number().int().min(1),
+  internalWallThickness: z.number().min(0.01),
+
   wallThickness: z.number().min(0.01),
   lidThickness: z.number().min(0.01),
   lidDepth: z.number().min(0.01),
   lidCutout: z.boolean(),
   lidOverhang: z.number().min(0),
   lidTolerance: z.number().min(0.01),
+
   spacing: z.number().min(0.01),
   isPrintMode: z.boolean(),
   isCrossSectionMode: z.boolean(),
+
   fileName: z.string().min(1)
 });
 
 export type FormSchemaType = typeof FormSchema;
 export type FormObject = z.infer<FormSchemaType>;
+export type FormPropName = keyof FormObject;
 
-export type FormInputType = 'slider' | 'number' | 'text' | 'switch' | 'boolean';
+export type FormInputType = 'slider' | 'number' | 'text' | 'switch' | 'boolean' | 'toggle_button';
 export interface FormInputConfig {
   paramName: string; // key in the query string
   type: FormInputType;
@@ -36,9 +45,10 @@ export interface FormInputConfig {
   max?: number; // where the slider limits are
   trueLabel?: string; // for switches
   falseLabel?: string; // for switches
+  options?: { value: any; label: string }[]; // for multiple choice
 }
 
-export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
+export const formConfig: { [K in FormPropName]: FormInputConfig } = {
   width: {
     paramName: 'w',
     type: 'slider',
@@ -50,22 +60,22 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     inputStep: 0.25,
     max: 100
   },
-  height: {
-    paramName: 'h',
+  depth: {
+    paramName: 'd',
     type: 'slider',
-    displayName: 'Height',
-    description: 'Height of the box',
+    displayName: 'Depth',
+    description: 'Depth of the box',
     defaultValue: 25,
     unit: 'mm',
     sliderStep: 1,
     inputStep: 0.25,
     max: 100
   },
-  depth: {
-    paramName: 'd',
+  height: {
+    paramName: 'h',
     type: 'slider',
-    displayName: 'Depth',
-    description: 'Depth of the box',
+    displayName: 'Height',
+    description: 'Height of the box',
     defaultValue: 25,
     unit: 'mm',
     sliderStep: 1,
@@ -84,15 +94,47 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     min: 0,
     max: 10
   },
-  isOuterDimensions: {
-    paramName: 'is_outer',
-    type: 'switch',
-    displayName: 'Inner/Outer Dimensions',
-    description: 'Are the width/height/depth the dimensions of the inside or the outside of the box?',
-    defaultValue: true,
-    falseLabel: 'Inner',
-    trueLabel: 'Outer'
+
+  dimensionType: {
+    paramName: 'dt',
+    type: 'toggle_button',
+    displayName: 'Dimension Type',
+    description: 'What do the width/height/depth define?',
+    defaultValue: 2,
+    options: dimensionTypeConfigs
   },
+
+  sectionsAcross: {
+    paramName: 's_w',
+    type: 'slider',
+    displayName: '# of Compartments Across',
+    description: 'How many compartments across should the box have',
+    defaultValue: 1,
+    sliderStep: 1,
+    min: 1,
+    max: 5
+  },
+  sectionsDeep: {
+    paramName: 's_d',
+    type: 'slider',
+    displayName: '# of Compartments Deep',
+    description: 'How many compartments deep should the box have',
+    defaultValue: 1,
+    sliderStep: 1,
+    min: 1,
+    max: 5
+  },
+  internalWallThickness: {
+    paramName: 'wl_th_i',
+    type: 'slider',
+    displayName: 'Internal Wall Thickness',
+    description: 'Thickness of the compartment walls',
+    defaultValue: 1,
+    unit: 'mm',
+    sliderStep: 0.1,
+    max: 5
+  },
+
   wallThickness: {
     paramName: 'wl_th',
     type: 'slider',
@@ -135,7 +177,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     type: 'slider',
     displayName: 'Lid Overhang',
     description: 'How far should the lid protrude from the edge of the box',
-    defaultValue: 0.25,
+    defaultValue: 0.5,
     unit: 'mm',
     sliderStep: 0.05,
     min: 0,
@@ -146,7 +188,7 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
     type: 'slider',
     displayName: 'Lid Tolerance',
     description: 'Tolerance between the lid and the box on each side',
-    defaultValue: 0.06,
+    defaultValue: 0.05,
     unit: 'mm',
     sliderStep: 0.01,
     min: 0,
@@ -186,4 +228,46 @@ export const formConfig: { [K in keyof FormObject]: FormInputConfig } = {
   }
 };
 
-export const defaultForm: FormObject = Object.fromEntries(Object.entries(formConfig).map(([key, value]) => [key, value.defaultValue])) as FormObject;
+export const formGroups: (FormPropName[] | FormPropName)[] = [
+  [
+    //
+    'width',
+    'depth',
+    'height',
+    'cornerRadius',
+    'dimensionType',
+    'wallThickness'
+  ],
+
+  [
+    //
+    'sectionsAcross',
+    'sectionsDeep',
+    'internalWallThickness'
+  ],
+
+  [
+    //
+    'lidThickness',
+    'lidDepth',
+    'lidCutout',
+    'lidOverhang',
+    'lidTolerance'
+  ],
+
+  [
+    //
+    'spacing',
+    'isPrintMode',
+    'isCrossSectionMode'
+  ],
+
+  [
+    //
+    'fileName'
+  ]
+];
+
+export const defaultFormObj: FormObject = Object.fromEntries(
+  Object.entries(formConfig).map(([key, value]) => [key, value.defaultValue])
+) as FormObject;

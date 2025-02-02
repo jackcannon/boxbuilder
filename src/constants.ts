@@ -2,7 +2,7 @@
 export const SIDEBAR_PERCENT = 40;
 
 // debug
-export const IS_DEBUG = false;
+export const IS_DEBUG = true;
 
 // rendering
 export const NUM_SEGMENTS_MIN = 16;

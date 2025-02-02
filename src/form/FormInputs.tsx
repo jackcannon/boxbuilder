@@ -1,4 +1,4 @@
-import { Checkbox, Grid2, Input, InputAdornment, Slider, Switch, Tooltip, Typography } from '@mui/material';
+import { Checkbox, Grid2, Input, InputAdornment, Slider, Switch, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 
 import { FormInputConfig } from './schema';
@@ -118,7 +118,6 @@ export const FormInputSwitch = <T extends unknown>({ propName, config, value, on
       <Switch
         checked={Boolean(value)}
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChange(Boolean(event.target.checked) as T)}
-        inputProps={{ 'aria-label': 'controlled' }}
         sx={{ margin: '0' }}
       />
       <Grid2>
@@ -127,15 +126,35 @@ export const FormInputSwitch = <T extends unknown>({ propName, config, value, on
     </Grid2>
   );
 };
+
 export const FormInputBoolean = <T extends unknown>({ propName, config, value, onChange }: InputProps<T>) => {
   return (
     <Grid2 container flex={1} flexGrow={1} justifyContent="flex-start" alignItems="center">
       <Checkbox
         checked={Boolean(value)}
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChange(Boolean(event.target.checked) as T)}
-        inputProps={{ 'aria-label': 'controlled' }}
         sx={{ margin: '0' }}
       />
+    </Grid2>
+  );
+};
+export const FormInputToggleButton = <T extends unknown>({ propName, config, value, onChange }: InputProps<T>) => {
+  return (
+    <Grid2 container flex={1} flexGrow={1} justifyContent="center" alignItems="center">
+      <ToggleButtonGroup
+        color="primary"
+        size="small"
+        value={value}
+        exclusive
+        onChange={(event: React.MouseEvent<HTMLElement>, newValue: T) => onChange(newValue)}
+        sx={{ marginTop: '0.25em' }}
+      >
+        {config.options?.map((opt) => (
+          <ToggleButton value={opt.value} sx={{ textTransform: 'none', padding: '0.5em 1em' }}>
+            {opt.label}
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
     </Grid2>
   );
 };
@@ -143,9 +162,9 @@ export const FormInputBoolean = <T extends unknown>({ propName, config, value, o
 export const FormInput = <T extends unknown>(props: InputProps<T>) => {
   const { propName, config, value, onChange } = props;
 
-  let width = '100%';
+  let flex = '1 0 100%';
   if (['boolean'].includes(config.type)) {
-    width = '50%';
+    flex = '1 0 0%'; // fits multiple on same row
   }
 
   const section = () => {
@@ -160,13 +179,15 @@ export const FormInput = <T extends unknown>(props: InputProps<T>) => {
         return <FormInputSwitch {...props} />;
       case 'boolean':
         return <FormInputBoolean {...props} />;
+      case 'toggle_button':
+        return <FormInputToggleButton {...props} />;
       default:
         return <FormInputSlider {...props} />;
     }
   };
 
   return (
-    <Grid2 container spacing={0} sx={{ alignItems: 'center', padding: '0 0.25em 0.75em', width }}>
+    <Grid2 container spacing={0} sx={{ alignItems: 'center', padding: '0 0.25em 0.75em', flex }}>
       <Grid2 sx={{ width: '100%' }}>
         <Typography variant="body2" id={`input-slider-${propName}`}>
           {config.displayName}{' '}
