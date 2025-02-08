@@ -1,2 +1,3 @@
-https://github.com/jakeg/heroku-buildpack-bun
-https://github.com/dokku/buildpack-nginx
+https://github.com/jackcannon/heroku-buildpack-env
+https://github.com/jackcannon/heroku-buildpack-bun
+https://github.com/jackcannon/heroku-buildpack-nginx
