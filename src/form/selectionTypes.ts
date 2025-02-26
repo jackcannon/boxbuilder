@@ -13,3 +13,15 @@ export const dimensionTypeConfigs: { value: number; name: DimensionTypeName; lab
 export const dimensionTypeLookup: Record<number, DimensionTypeName> = Object.fromEntries(
   dimensionTypeConfigs.map(({ value, name }) => [value, name])
 );
+
+export enum LidType {
+  INSERT = 0,
+  COVER = 1
+}
+export type LidTypeName = keyof typeof LidType;
+
+export const lidTypeConfigs: { value: number; name: LidTypeName; label: string }[] = [
+  { value: 0, name: 'INSERT', label: 'Insert' },
+  { value: 1, name: 'COVER', label: 'Cover' }
+];
+export const lidTypeLookup: Record<number, LidTypeName> = Object.fromEntries(lidTypeConfigs.map(({ value, name }) => [value, name]));

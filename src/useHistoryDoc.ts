@@ -1,7 +1,7 @@
 import { ZodSchema } from 'zod';
 import { useEffect, useState } from 'react';
 import { formConfig, FormObject, FormPropName } from './form/schema';
-import { DimensionType } from './form/dimensionTypes';
+import { DimensionType } from './form/selectionTypes';
 
 const paramNameDictionary = Object.fromEntries(Object.entries(formConfig).map(([key, value]) => [value.paramName, key]));
 

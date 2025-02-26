@@ -1,5 +1,5 @@
 import z from 'zod';
-import { dimensionTypeConfigs } from './dimensionTypes';
+import { dimensionTypeConfigs, LidType, lidTypeConfigs } from './selectionTypes';
 
 export const FormSchema = z.object({
   dimensionType: z.number().int().min(0).max(2),
@@ -14,10 +14,13 @@ export const FormSchema = z.object({
   internalWallHeight: z.number().min(0.01),
   internalWallThickness: z.number().min(0.01),
 
+  lidType: z.number().int().min(0).max(1),
   lidThickness: z.number().min(0.01),
+  lidWallThickness: z.number().min(0.01),
   lidDepth: z.number().min(0.01),
   lidCutout: z.boolean(),
   lidOverhang: z.number().min(0),
+  lidInnerDepth: z.number().min(0),
   lidTolerance: z.number().min(0.01),
 
   spacing: z.number().min(0.01),
@@ -48,6 +51,7 @@ export interface FormInputConfig {
   trueLabel?: string; // for switches
   falseLabel?: string; // for switches
   options?: { value: any; label: string }[]; // for multiple choice
+  show?: (formObj: FormObject) => boolean; // for conditional visibility
 }
 
 export const formConfig: { [K in FormPropName]: FormInputConfig } = {
@@ -56,7 +60,7 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     type: 'toggle_button',
     displayName: 'Dimension Type',
     description: 'What do the width/height/depth define?',
-    defaultValue: 2,
+    defaultValue: 1,
     options: dimensionTypeConfigs
   },
   width: {
@@ -113,7 +117,7 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     unit: 'mm',
     sliderStep: 0.1,
     inputStep: 0.05,
-    max: 5
+    max: 3
   },
 
   sectionsAcross: {
@@ -157,9 +161,17 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     unit: 'mm',
     sliderStep: 0.1,
     inputStep: 0.05,
-    max: 5
+    max: 3
   },
 
+  lidType: {
+    paramName: 'ld_t',
+    type: 'toggle_button',
+    displayName: 'Lid Type',
+    description: 'What type of lid should the box have?',
+    defaultValue: 0,
+    options: lidTypeConfigs
+  },
   lidThickness: {
     paramName: 'ld_th',
     type: 'slider',
@@ -168,13 +180,24 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     defaultValue: 1.5,
     unit: 'mm',
     sliderStep: 0.1,
-    max: 5
+    max: 3
+  },
+  lidWallThickness: {
+    paramName: 'ld_wlth',
+    type: 'slider',
+    displayName: 'Lid Wall Thickness',
+    description: 'Thickness of the box lid walls (either the inserts or the outer cover)',
+    defaultValue: 1,
+    unit: 'mm',
+    sliderStep: 0.1,
+    inputStep: 0.05,
+    max: 3
   },
   lidDepth: {
     paramName: 'ld_d',
     type: 'slider',
     displayName: 'Lid Depth',
-    description: 'How deep the lid goes into the box',
+    description: 'How deep the lid goes into/over the box',
     defaultValue: 5,
     unit: 'mm',
     sliderStep: 0.1,
@@ -184,19 +207,33 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     paramName: 'ld_co',
     type: 'boolean',
     displayName: 'Lid Cutout',
-    description: 'Should the lid have a cutout instead of a solid top?',
-    defaultValue: true
+    description: 'Should the lid have a cutout instead of a solid top? (only used for insert lid type)',
+    defaultValue: true,
+    show: (formObj: FormObject) => formObj.lidType === LidType.INSERT
   },
   lidOverhang: {
     paramName: 'ld_oh',
     type: 'slider',
     displayName: 'Lid Overhang',
-    description: 'How far should the lid protrude from the edge of the box',
+    description: 'How far should the lid protrude from the edge of the box (only used for insert lid type)',
     defaultValue: 0.5,
     unit: 'mm',
     sliderStep: 0.05,
     min: 0,
-    max: 3
+    max: 3,
+    show: (formObj: FormObject) => formObj.lidType === LidType.INSERT
+  },
+  lidInnerDepth: {
+    paramName: 'ld_id',
+    type: 'slider',
+    displayName: 'Lid Inner Depth',
+    description: "How much of the box is 'inside' the lid (only used for cover lid type)",
+    defaultValue: 0,
+    unit: 'mm',
+    sliderStep: 0.5,
+    min: 0,
+    max: 50,
+    show: (formObj: FormObject) => formObj.lidType === LidType.COVER
   },
   lidTolerance: {
     paramName: 'ld_tol',
@@ -209,6 +246,7 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     min: 0,
     max: 1
   },
+
   spacing: {
     paramName: 'sp',
     type: 'slider',
@@ -264,10 +302,13 @@ export const formGroups: (FormPropName[] | FormPropName)[] = [
 
   [
     //
+    'lidType',
     'lidThickness',
+    'lidWallThickness',
     'lidDepth',
     'lidCutout',
     'lidOverhang',
+    'lidInnerDepth',
     'lidTolerance'
   ],
 

@@ -17,6 +17,9 @@ export const Form = ({ schema, object, onChange }: Props) => {
     const value = object[key as unknown as FormPropName];
     const onChangeValue = <T extends unknown>(v: T) => onChange({ ...object, [key]: v });
 
+    const isShow = config.show ? config.show(object) : true;
+    if (!isShow) return null;
+
     return <FormInput key={key} propName={key} config={config} value={value} onChange={onChangeValue} />;
   };
   return (
