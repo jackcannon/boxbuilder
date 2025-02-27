@@ -8,9 +8,10 @@ interface InputProps<T> {
   config: FormInputConfig;
   value: T;
   onChange: (v: T) => void;
+  max?: number;
 }
 
-export const FormInputSlider = <T extends unknown>({ propName, config, value, onChange }: InputProps<T>) => {
+export const FormInputSlider = <T extends unknown>({ propName, config, value, onChange, max }: InputProps<T>) => {
   const endAdornment = config.unit ? (
     <InputAdornment position="end" sx={{ margin: 0 }}>
       {config.unit}
@@ -28,7 +29,7 @@ export const FormInputSlider = <T extends unknown>({ propName, config, value, on
           aria-labelledby={`input-slider-${propName}`}
           step={config.sliderStep}
           min={config.min ?? config.sliderStep ?? config.inputStep ?? 0}
-          max={config.max}
+          max={max}
         />
       </Grid2>
       <Grid2>

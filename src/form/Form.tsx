@@ -20,7 +20,9 @@ export const Form = ({ schema, object, onChange }: Props) => {
     const isShow = config.show ? config.show(object) : true;
     if (!isShow) return null;
 
-    return <FormInput key={key} propName={key} config={config} value={value} onChange={onChangeValue} />;
+    const max = typeof config.max === 'function' ? config.max(object) : config.max;
+
+    return <FormInput key={key} propName={key} config={config} value={value} max={max} onChange={onChangeValue} />;
   };
   return (
     <Grid2 container spacing={1} direction="row" wrap="wrap" justifyContent="flex-start" sx={{ width: 'calc(100% - 1em)' }}>

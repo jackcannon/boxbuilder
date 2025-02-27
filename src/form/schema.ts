@@ -1,5 +1,6 @@
 import z from 'zod';
 import { dimensionTypeConfigs, LidType, lidTypeConfigs } from './selectionTypes';
+import { MathsTools } from 'swiss-ak';
 
 export const FormSchema = z.object({
   dimensionType: z.number().int().min(0).max(2),
@@ -47,7 +48,7 @@ export interface FormInputConfig {
   sliderStep?: number; // slider step/increment value
   inputStep?: number; // slider step/increment value
   min?: number; // where the slider limits are
-  max?: number; // where the slider limits are
+  max?: ((formObj: FormObject) => number) | number; // where the slider limits are
   trueLabel?: string; // for switches
   falseLabel?: string; // for switches
   options?: { value: any; label: string }[]; // for multiple choice
@@ -72,7 +73,7 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     unit: 'mm',
     sliderStep: 1,
     inputStep: 0.25,
-    max: 100
+    max: (form) => MathsTools.ceilTo(100, Math.max(form.width, form.height, form.depth))
   },
   depth: {
     paramName: 'd',
@@ -83,7 +84,7 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     unit: 'mm',
     sliderStep: 1,
     inputStep: 0.25,
-    max: 100
+    max: (form) => MathsTools.ceilTo(100, Math.max(form.width, form.height, form.depth))
   },
   height: {
     paramName: 'h',
@@ -94,7 +95,7 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     unit: 'mm',
     sliderStep: 1,
     inputStep: 0.25,
-    max: 100
+    max: (form) => MathsTools.ceilTo(100, Math.max(form.width, form.height, form.depth))
   },
   cornerRadius: {
     paramName: 'cr',
@@ -106,7 +107,7 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     unit: 'mm',
     sliderStep: 0.1,
     min: 0,
-    max: 10
+    max: (form) => Math.min(form.width, form.depth) / 2
   },
   wallThickness: {
     paramName: 'wl_th',
@@ -150,7 +151,7 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     unit: 'mm',
     sliderStep: 1,
     inputStep: 0.25,
-    max: 100
+    max: (form) => form.height
   },
   internalWallThickness: {
     paramName: 's_wl_th',
@@ -201,7 +202,7 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     defaultValue: 5,
     unit: 'mm',
     sliderStep: 0.1,
-    max: 10
+    max: (form) => form.height
   },
   lidCutout: {
     paramName: 'ld_co',
@@ -232,7 +233,7 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     unit: 'mm',
     sliderStep: 0.5,
     min: 0,
-    max: 50,
+    max: (form) => form.height,
     show: (formObj: FormObject) => formObj.lidType === LidType.COVER
   },
   lidTolerance: {
@@ -244,7 +245,7 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     unit: 'mm',
     sliderStep: 0.01,
     min: 0,
-    max: 1
+    max: 0.5
   },
 
   spacing: {
