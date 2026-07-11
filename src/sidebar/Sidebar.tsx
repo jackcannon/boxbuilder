@@ -7,6 +7,7 @@ import { FormObject, FormSchema } from '../form/schema';
 import { Form } from '../form/Form';
 
 import logo from '/logo.svg';
+import patternModifiersLogo from '/pattern-modifiers-logo.svg';
 
 import './sidebar.css';
 
@@ -34,8 +35,23 @@ export const Sidebar = ({ style, form, setForm }: Props) => {
       <div className="gap"></div>
 
       <div className="footer">
+        <Tooltip title="Pattern Modifiers" arrow>
+          <a
+            href="https://patterns.cannonbury.co.uk/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-link pattern-modifiers-link"
+          >
+            <img src={patternModifiersLogo} alt="Pattern Modifiers" />
+          </a>
+        </Tooltip>
         <Tooltip title="View source on GitHub" arrow>
-          <a href="https://github.com/jackcannon/boxbuilder" target="_blank" className="github-link">
+          <a
+            href="https://github.com/jackcannon/boxbuilder"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="footer-link github-link"
+          >
             <GitHubIcon />
           </a>
         </Tooltip>
