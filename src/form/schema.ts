@@ -326,6 +326,5 @@ export const formGroups: (FormPropName[] | FormPropName)[] = [
   ]
 ];
 
-export const defaultFormObj: FormObject = Object.fromEntries(
-  Object.entries(formConfig).map(([key, value]) => [key, value.defaultValue])
-) as FormObject;
+export const createDefaultFormObj = (): FormObject =>
+  Object.fromEntries(Object.entries(formConfig).map(([key, value]) => [key, value.defaultValue])) as FormObject;
