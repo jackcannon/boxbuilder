@@ -1,9 +1,12 @@
-import { Button, Tooltip } from '@mui/material';
-import { Geometry } from '@jscad/modeling/src/geometries/types';
+import { useState } from 'react';
+import { Button, Snackbar, Tooltip } from '@mui/material';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import DownloadIcon from '@mui/icons-material/Download';
+import IosShareIcon from '@mui/icons-material/IosShare';
 
 import { exportSTL } from '../geometry/exportStl';
 import { FormObject, FormSchema } from '../form/schema';
+import { buildShareUrl } from '../form/shareUrl';
 import { Form } from '../form/Form';
 
 import logo from '/logo.svg';
@@ -18,21 +21,43 @@ interface Props {
 }
 
 export const Sidebar = ({ style, form, setForm }: Props) => {
+  const [shareNotice, setShareNotice] = useState<string | null>(null);
+
+  const handleShare = async () => {
+    const url = buildShareUrl(form);
+
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareNotice('Share link copied to clipboard');
+    } catch {
+      setShareNotice(url);
+    }
+  };
+
   return (
     <section className="sidebar" style={style}>
       <img src={logo} alt="logo" className="logo" />
 
       <Form object={form} schema={FormSchema} onChange={setForm} />
 
-      {/* <pre>{JSON.stringify(form, null, 2)}</pre> */}
+      <div className="gap"></div>
 
-      <div>
-        <Button variant="contained" color="primary" onClick={() => exportSTL(form, form.fileName)}>
+      <div className="actions">
+        <Button
+          variant="contained"
+          size="large"
+          className="actions-download"
+          startIcon={<DownloadIcon />}
+          onClick={() => exportSTL(form, form.fileName)}
+        >
           Download STL
         </Button>
+        <Tooltip title="Copy share link" placement="top" arrow>
+          <Button variant="outlined" size="large" className="actions-share" aria-label="Copy share link" onClick={handleShare}>
+            <IosShareIcon />
+          </Button>
+        </Tooltip>
       </div>
-
-      <div className="gap"></div>
 
       <div className="footer">
         <Tooltip title="Pattern Modifiers" arrow>
@@ -56,6 +81,13 @@ export const Sidebar = ({ style, form, setForm }: Props) => {
           </a>
         </Tooltip>
       </div>
+
+      <Snackbar
+        open={shareNotice !== null}
+        autoHideDuration={shareNotice?.startsWith('http') ? 8000 : 3000}
+        message={shareNotice ?? ''}
+        onClose={() => setShareNotice(null)}
+      />
     </section>
   );
 };
