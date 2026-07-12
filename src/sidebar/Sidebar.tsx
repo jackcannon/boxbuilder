@@ -3,6 +3,7 @@ import { Button, Snackbar, Tooltip } from '@mui/material';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import DownloadIcon from '@mui/icons-material/Download';
 import IosShareIcon from '@mui/icons-material/IosShare';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 import { exportSTL } from '../geometry/exportStl';
 import { FormObject, FormSchema } from '../form/schema';
@@ -18,9 +19,10 @@ interface Props {
   style: React.CSSProperties | undefined;
   form: FormObject;
   setForm: (form: FormObject) => void;
+  onReset: () => void;
 }
 
-export const Sidebar = ({ style, form, setForm }: Props) => {
+export const Sidebar = ({ style, form, setForm, onReset }: Props) => {
   const [shareNotice, setShareNotice] = useState<string | null>(null);
 
   const handleShare = async () => {
@@ -60,26 +62,34 @@ export const Sidebar = ({ style, form, setForm }: Props) => {
       </div>
 
       <div className="footer">
-        <Tooltip title="Pattern Modifiers" arrow>
-          <a
-            href="https://patterns.cannonbury.co.uk/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="footer-link pattern-modifiers-link"
-          >
-            <img src={patternModifiersLogo} alt="Pattern Modifiers" />
-          </a>
+        <Tooltip title="Reset all fields to defaults" arrow>
+          <button type="button" className="footer-link footer-reset" onClick={onReset}>
+            <RefreshIcon />
+            Reset
+          </button>
         </Tooltip>
-        <Tooltip title="View source on GitHub" arrow>
-          <a
-            href="https://github.com/jackcannon/boxbuilder"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="footer-link github-link"
-          >
-            <GitHubIcon />
-          </a>
-        </Tooltip>
+        <div className="footer-links">
+          <Tooltip title="Pattern Modifiers" arrow>
+            <a
+              href="https://patterns.cannonbury.co.uk/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-link pattern-modifiers-link"
+            >
+              <img src={patternModifiersLogo} alt="Pattern Modifiers" />
+            </a>
+          </Tooltip>
+          <Tooltip title="View source on GitHub" arrow>
+            <a
+              href="https://github.com/jackcannon/boxbuilder"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-link github-link"
+            >
+              <GitHubIcon />
+            </a>
+          </Tooltip>
+        </div>
       </div>
 
       <Snackbar
