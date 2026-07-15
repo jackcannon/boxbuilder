@@ -5,10 +5,14 @@ import DownloadIcon from '@mui/icons-material/Download';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
-import { exportSTL } from '../geometry/exportStl';
+import { applyExportToForm, getExportDisplayFileName } from '../form/exportState';
+import { loadExportHistoryRecord, useExportHistory } from '../form/exportHistoryStorage';
 import { FormObject, FormSchema } from '../form/schema';
 import { buildShareUrl } from '../form/shareUrl';
+import { exportSTL } from '../geometry/exportStl';
 import { Form } from '../form/Form';
+
+import { ExportHistory } from './ExportHistory';
 
 import logo from '/logo.svg';
 import patternModifiersLogo from '/pattern-modifiers-logo.svg';
@@ -24,6 +28,7 @@ interface Props {
 
 export const Sidebar = ({ style, form, setForm, onReset }: Props) => {
   const [shareNotice, setShareNotice] = useState<string | null>(null);
+  const { entries, selectedId, setSelectedId, record, remove } = useExportHistory();
 
   const handleShare = async () => {
     const url = buildShareUrl(form);
@@ -34,6 +39,24 @@ export const Sidebar = ({ style, form, setForm, onReset }: Props) => {
     } catch {
       setShareNotice(url);
     }
+  };
+
+  const handleDownload = () => {
+    exportSTL(form, getExportDisplayFileName(form));
+    record(form);
+  };
+
+  const handleSelectExport = (id: string) => {
+    setSelectedId(id);
+  };
+
+  const handleApplyExport = () => {
+    if (!selectedId) return;
+
+    const stored = loadExportHistoryRecord(selectedId);
+    if (!stored) return;
+
+    setForm(applyExportToForm(form, stored.effective));
   };
 
   return (
@@ -50,7 +73,7 @@ export const Sidebar = ({ style, form, setForm, onReset }: Props) => {
           size="large"
           className="actions-download"
           startIcon={<DownloadIcon />}
-          onClick={() => exportSTL(form, form.fileName)}
+          onClick={handleDownload}
         >
           Download STL
         </Button>
@@ -60,6 +83,14 @@ export const Sidebar = ({ style, form, setForm, onReset }: Props) => {
           </Button>
         </Tooltip>
       </div>
+
+      <ExportHistory
+        entries={entries}
+        selectedId={selectedId}
+        onSelect={handleSelectExport}
+        onApply={handleApplyExport}
+        onDelete={remove}
+      />
 
       <div className="footer">
         <Tooltip title="Reset all fields to defaults" arrow>

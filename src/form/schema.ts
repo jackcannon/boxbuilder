@@ -1,6 +1,7 @@
 import z from 'zod';
-import { dimensionTypeConfigs, LidType, lidTypeConfigs } from './selectionTypes';
 import { MathsTools } from 'swiss-ak';
+
+import { dimensionTypeConfigs, LidType, lidTypeConfigs, lidTypeLookup } from './selectionTypes';
 
 export const FormSchema = z.object({
   dimensionType: z.number().int().min(0).max(2),
@@ -28,7 +29,7 @@ export const FormSchema = z.object({
   isPrintMode: z.boolean(),
   isCrossSectionMode: z.boolean(),
 
-  fileName: z.string().min(1)
+  fileName: z.string()
 });
 
 export type FormSchemaType = typeof FormSchema;
@@ -53,6 +54,7 @@ export interface FormInputConfig {
   falseLabel?: string; // for switches
   options?: { value: any; label: string }[]; // for multiple choice
   show?: (formObj: FormObject) => boolean; // for conditional visibility
+  placeholder?: (formObj: FormObject) => string;
 }
 
 export const formConfig: { [K in FormPropName]: FormInputConfig } = {
@@ -276,33 +278,35 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     paramName: 'fn',
     type: 'text',
     displayName: 'File Name',
-    description: 'Name of the file',
-    defaultValue: 'box',
-    unit: '.stl'
+    description: 'Name of the downloaded STL file. Leave blank to use the auto-generated name',
+    defaultValue: '',
+    unit: '.stl',
+    placeholder: (form) => getDefaultFileName(form)
   }
 };
 
-export const formGroups: (FormPropName[] | FormPropName)[] = [
-  [
-    //
-    'dimensionType',
-    'width',
-    'depth',
-    'height',
-    'cornerRadius',
-    'wallThickness'
-  ],
+export const isFieldActive = (key: FormPropName, form: FormObject): boolean => {
+  const config = formConfig[key];
+  return config.show ? config.show(form) : true;
+};
 
-  [
-    //
-    'sectionsAcross',
-    'sectionsDeep',
-    'internalWallHeight',
-    'internalWallThickness'
-  ],
+export const getDefaultFileName = (form: FormObject) => {
+  const lidLabel = lidTypeLookup[form.lidType]?.toLowerCase() ?? 'lid';
+  return `box-${form.width}x${form.depth}x${form.height}-${lidLabel}`;
+};
 
+export type FormGroupDef =
+  | FormPropName
+  | FormPropName[]
+  | {
+      title?: string;
+      fields: FormPropName[];
+    };
+
+export const formGroups: FormGroupDef[] = [
+  ['dimensionType', 'width', 'depth', 'height', 'cornerRadius', 'wallThickness'],
+  ['sectionsAcross', 'sectionsDeep', 'internalWallHeight', 'internalWallThickness'],
   [
-    //
     'lidType',
     'lidThickness',
     'lidWallThickness',
@@ -312,18 +316,8 @@ export const formGroups: (FormPropName[] | FormPropName)[] = [
     'lidInnerDepth',
     'lidTolerance'
   ],
-
-  [
-    //
-    'spacing',
-    'isPrintMode',
-    'isCrossSectionMode'
-  ],
-
-  [
-    //
-    'fileName'
-  ]
+  ['spacing', 'isPrintMode', 'isCrossSectionMode'],
+  ['fileName']
 ];
 
 export const createDefaultFormObj = (): FormObject =>

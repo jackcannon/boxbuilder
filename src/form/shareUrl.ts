@@ -1,4 +1,4 @@
-import { formConfig, FormObject, FormPropName } from './schema';
+import { formConfig, FormObject, FormPropName, isFieldActive } from './schema';
 import { DimensionType } from './selectionTypes';
 
 /** Previous param names. Add entries here when renaming share URL params */
@@ -15,11 +15,6 @@ const buildParamNameDictionary = () => {
 };
 
 const paramNameDictionary = buildParamNameDictionary();
-
-export const isFieldActive = (key: FormPropName, form: FormObject): boolean => {
-  const config = formConfig[key];
-  return config.show ? config.show(form) : true;
-};
 
 export const isFieldIncludedInShare = (key: FormPropName, form: FormObject): boolean => isFieldActive(key, form);
 
