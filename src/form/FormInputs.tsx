@@ -9,6 +9,7 @@ interface InputProps<T> {
   value: T;
   onChange: (v: T) => void;
   max?: number;
+  placeholder?: string;
 }
 
 export const FormInputSlider = <T extends unknown>({ propName, config, value, onChange, max }: InputProps<T>) => {
@@ -82,7 +83,7 @@ export const FormInputNumber = <T extends unknown>({ propName, config, value, on
   );
 };
 
-export const FormInputText = <T extends unknown>({ propName, config, value, onChange }: InputProps<T>) => {
+export const FormInputText = <T extends unknown>({ propName, config, value, onChange, placeholder }: InputProps<T>) => {
   const endAdornment = config.unit ? (
     <InputAdornment position="end" sx={{ margin: 0 }}>
       {config.unit}
@@ -95,7 +96,7 @@ export const FormInputText = <T extends unknown>({ propName, config, value, onCh
         size="small"
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChange(event.target.value as any)}
         sx={{ width: '100%' }}
-        inputProps={{ 'aria-labelledby': `input-slider-${propName}` }}
+        inputProps={{ 'aria-labelledby': `input-slider-${propName}`, placeholder }}
         endAdornment={endAdornment}
       />
     </Grid2>
@@ -139,7 +140,7 @@ export const FormInputBoolean = <T extends unknown>({ propName, config, value, o
     </Grid2>
   );
 };
-export const FormInputToggleButton = <T extends unknown>({ propName, config, value, onChange }: InputProps<T>) => {
+export const FormInputToggleButton = <T extends unknown>({ config, value, onChange }: InputProps<T>) => {
   return (
     <Grid2 container flex={1} flexGrow={1} justifyContent="center" alignItems="center">
       <ToggleButtonGroup
@@ -147,7 +148,9 @@ export const FormInputToggleButton = <T extends unknown>({ propName, config, val
         size="small"
         value={value}
         exclusive
-        onChange={(event: React.MouseEvent<HTMLElement>, newValue: T) => onChange(newValue)}
+        onChange={(event: React.MouseEvent<HTMLElement>, newValue: T) => {
+          if (newValue !== null) onChange(newValue);
+        }}
         sx={{ marginTop: '0.25em' }}
       >
         {config.options?.map((opt) => (
@@ -161,7 +164,7 @@ export const FormInputToggleButton = <T extends unknown>({ propName, config, val
 };
 
 export const FormInput = <T extends unknown>(props: InputProps<T>) => {
-  const { propName, config, value, onChange } = props;
+  const { propName, config, placeholder } = props;
 
   let flex = '1 0 100%';
   if (['boolean'].includes(config.type)) {
@@ -175,7 +178,7 @@ export const FormInput = <T extends unknown>(props: InputProps<T>) => {
       case 'number':
         return <FormInputNumber {...props} />;
       case 'text':
-        return <FormInputText {...props} />;
+        return <FormInputText {...props} placeholder={placeholder} />;
       case 'switch':
         return <FormInputSwitch {...props} />;
       case 'boolean':

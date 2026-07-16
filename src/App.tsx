@@ -9,9 +9,12 @@ import { useHistoryDoc } from './useHistoryDoc';
 
 import './App.css';
 
+const primary = { main: '#4dacff' };
+
 const theme = createTheme({
   colorSchemes: {
-    dark: true
+    light: { palette: { primary } },
+    dark: { palette: { primary } }
   }
 });
 

@@ -304,20 +304,35 @@ export type FormGroupDef =
     };
 
 export const formGroups: FormGroupDef[] = [
-  ['dimensionType', 'width', 'depth', 'height', 'cornerRadius', 'wallThickness'],
-  ['sectionsAcross', 'sectionsDeep', 'internalWallHeight', 'internalWallThickness'],
-  [
-    'lidType',
-    'lidThickness',
-    'lidWallThickness',
-    'lidDepth',
-    'lidCutout',
-    'lidOverhang',
-    'lidInnerDepth',
-    'lidTolerance'
-  ],
-  ['spacing', 'isPrintMode', 'isCrossSectionMode'],
-  ['fileName']
+  {
+    title: 'Dimensions',
+    fields: ['dimensionType', 'width', 'depth', 'height', 'cornerRadius', 'wallThickness']
+  },
+  {
+    title: 'Compartments',
+    fields: ['sectionsAcross', 'sectionsDeep', 'internalWallHeight', 'internalWallThickness']
+  },
+  {
+    title: 'Lid',
+    fields: [
+      'lidType',
+      'lidThickness',
+      'lidWallThickness',
+      'lidDepth',
+      'lidCutout',
+      'lidOverhang',
+      'lidInnerDepth',
+      'lidTolerance'
+    ]
+  },
+  {
+    title: 'Layout',
+    fields: ['spacing', 'isPrintMode', 'isCrossSectionMode']
+  },
+  {
+    title: 'Export',
+    fields: ['fileName']
+  }
 ];
 
 export const createDefaultFormObj = (): FormObject =>
