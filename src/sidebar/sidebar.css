@@ -101,7 +101,7 @@
       cursor: pointer;
       color: color-mix(in srgb, var(--txt) 45%, transparent);
 
-      svg {
+      :is(svg) {
         width: 0.85em;
         height: 0.85em;
       }
