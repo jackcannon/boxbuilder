@@ -6,6 +6,8 @@ import { FormObject } from '../form/schema';
 import { formToSolids } from '../geometry/formToSolids';
 import { GET_DEBUG_TIMER } from '../utils';
 
+import { BuildPlate, X1C_BUILD_PLATE } from './BuildPlate';
+import { BuildVolumeGrid } from './BuildVolumeGrid';
 import { solidsToBufferGeometries } from './solidsToBufferGeometries';
 
 interface Props {
@@ -31,6 +33,12 @@ export const BoxModel = ({ form }: Props) => {
 
   return (
     <>
+      <BuildPlate width={X1C_BUILD_PLATE.width} depth={X1C_BUILD_PLATE.depth} />
+
+      <group position={[0, 0, 0.01]}>
+        <BuildVolumeGrid width={X1C_BUILD_PLATE.width} depth={X1C_BUILD_PLATE.depth} />
+      </group>
+
       {meshes.map((mesh, index) => (
         <mesh key={index} geometry={mesh.geometry} renderOrder={1}>
           <meshPhongMaterial color={mesh.color} flatShading shininess={12} specular="#3a3a3a" />
