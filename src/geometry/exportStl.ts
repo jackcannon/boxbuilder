@@ -1,8 +1,11 @@
 // @ts-ignore
 import * as serializer from '@jscad/stl-serializer';
+
 import { FormObject } from '../form/schema';
-import { formToSolids } from './formToSolids';
 import { GET_DEBUG_TIMER } from '../utils';
+
+import { useJscadBackend, useManifoldBackend } from './booleans';
+import { formToSolids } from './formToSolids';
 
 export const forceDownloadBlob = (title: string, blob: Blob) => {
   const a = document.createElement('a');
@@ -18,9 +21,16 @@ const ensureFileExtension = (name: string, ext: string = 'stl') => {
   return name + '.' + ext;
 };
 
-export const exportSTL = (form: FormObject, name: string = 'box') => {
+export const exportSTL = async (form: FormObject, name: string = 'box') => {
   const DEBUG_TIMER = GET_DEBUG_TIMER('formToSolids - exportSTL');
-  const solids = formToSolids(form, false);
+
+  await useManifoldBackend();
+  let solids;
+  try {
+    solids = formToSolids(form, false);
+  } finally {
+    useJscadBackend();
+  }
   DEBUG_TIMER.stop();
 
   const rawData = serializer.serialize({ binary: true }, solids);

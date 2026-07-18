@@ -1,10 +1,10 @@
 import { Geom3, Geometry } from '@jscad/modeling/src/geometries/types';
 import { cuboid, CuboidOptions } from '@jscad/modeling/src/primitives';
-import { intersect, subtract, union } from '@jscad/modeling/src/operations/booleans';
 import { transforms } from '@jscad/modeling';
 
 import { FormObject } from '../form/schema';
 import { CVec3, ff, ffO, vec3 } from '../utils';
+import { intersect, subtract, union } from './booleans';
 import { calculateSegments, limitRadius } from './geometryUtils';
 import { roundedCuboidExtruded } from './customShapes';
 import { Vec3 } from '@jscad/modeling/src/maths/vec3';

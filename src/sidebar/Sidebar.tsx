@@ -41,8 +41,8 @@ export const Sidebar = ({ style, form, setForm, onReset }: Props) => {
     }
   };
 
-  const handleDownload = () => {
-    exportSTL(form, getExportDisplayFileName(form));
+  const handleDownload = async () => {
+    await exportSTL(form, getExportDisplayFileName(form));
     record(form);
   };
 
