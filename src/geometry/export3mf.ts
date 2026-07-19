@@ -138,6 +138,7 @@ ${componentXml}
 <model unit="millimeter" xml:lang="und" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02">
   <metadata name="Application">BoxBuilder</metadata>
   <metadata name="CreationDate">${new Date().toISOString()}</metadata>
+  <metadata name="app-name">boxbuilder</metadata>
   <metadata name="ShareURL">${escapeXml(shareUrl)}</metadata>
   <metadata name="FormState">${escapeXml(formStateJson)}</metadata>
   <resources>
