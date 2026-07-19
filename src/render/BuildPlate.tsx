@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { MeshStandardMaterial } from 'three';
+import { MeshBasicMaterial } from 'three';
 
 import { useHideWhenViewedFromBelow } from './useHideWhenViewedFromBelow';
 
@@ -21,7 +21,7 @@ export const BuildPlate = ({
   margin = 5,
   thickness = 1
 }: Props) => {
-  const materialRef = useRef<MeshStandardMaterial>(null);
+  const materialRef = useRef<MeshBasicMaterial>(null);
   const plateWidth = width + margin * 2;
   const plateDepth = depth + margin * 2;
 
@@ -30,11 +30,10 @@ export const BuildPlate = ({
   return (
     <mesh position={[0, 0, -thickness / 2]} renderOrder={0}>
       <boxGeometry args={[plateWidth, plateDepth, thickness]} />
-      <meshStandardMaterial
+      <meshBasicMaterial
         ref={materialRef}
-        color="#3d3d37"
-        metalness={0.35}
-        roughness={0.65}
+        color="#191916"
+        toneMapped={false}
         transparent
         opacity={VISIBLE_OPACITY}
         depthWrite={false}
