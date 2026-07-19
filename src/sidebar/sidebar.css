@@ -33,8 +33,22 @@
       min-width: 0;
     }
 
+    /* Soft primary-container (STL) + solid primary (3MF) */
+    .actions-download-stl.MuiButton-contained {
+      background-color: color-mix(in srgb, #4dacff 18%, var(--bg));
+      color: #4dacff;
+      box-shadow: none;
+
+      &:hover {
+        background-color: color-mix(in srgb, #4dacff 28%, var(--bg));
+        box-shadow: none;
+      }
+    }
+
     .actions-share {
       flex: 0 0 auto;
+      min-width: 0;
+      padding-inline: 0.65em;
     }
   }
 

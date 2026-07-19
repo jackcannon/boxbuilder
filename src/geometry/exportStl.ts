@@ -16,7 +16,7 @@ export const forceDownloadBlob = (title: string, blob: Blob) => {
   document.body.removeChild(a);
 };
 
-const ensureFileExtension = (name: string, ext: string = 'stl') => {
+export const ensureFileExtension = (name: string, ext: string = 'stl') => {
   if (name.endsWith('.' + ext)) return name;
   return name + '.' + ext;
 };

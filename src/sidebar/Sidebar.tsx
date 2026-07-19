@@ -9,6 +9,7 @@ import { applyExportToForm, getExportDisplayFileName } from '../form/exportState
 import { loadExportHistoryRecord, useExportHistory } from '../form/exportHistoryStorage';
 import { FormObject, FormSchema } from '../form/schema';
 import { buildShareUrl } from '../form/shareUrl';
+import { export3MF } from '../geometry/export3mf';
 import { exportSTL } from '../geometry/exportStl';
 import { Form } from '../form/Form';
 
@@ -41,8 +42,13 @@ export const Sidebar = ({ style, form, setForm, onReset }: Props) => {
     }
   };
 
-  const handleDownload = async () => {
+  const handleDownloadStl = async () => {
     await exportSTL(form, getExportDisplayFileName(form));
+    record(form);
+  };
+
+  const handleDownload3mf = async () => {
+    await export3MF(form, getExportDisplayFileName(form));
     record(form);
   };
 
@@ -71,11 +77,20 @@ export const Sidebar = ({ style, form, setForm, onReset }: Props) => {
         <Button
           variant="contained"
           size="large"
-          className="actions-download"
+          className="actions-download actions-download-stl"
           startIcon={<DownloadIcon />}
-          onClick={handleDownload}
+          onClick={handleDownloadStl}
         >
-          Download STL
+          STL
+        </Button>
+        <Button
+          variant="contained"
+          size="large"
+          className="actions-download actions-download-3mf"
+          startIcon={<DownloadIcon />}
+          onClick={handleDownload3mf}
+        >
+          3MF
         </Button>
         <Tooltip title="Copy share link" placement="top" arrow>
           <Button variant="outlined" size="large" className="actions-share" aria-label="Copy share link" onClick={handleShare}>

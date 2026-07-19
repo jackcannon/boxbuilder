@@ -278,9 +278,8 @@ export const formConfig: { [K in FormPropName]: FormInputConfig } = {
     paramName: 'fn',
     type: 'text',
     displayName: 'File Name',
-    description: 'Name of the downloaded STL file. Leave blank to use the auto-generated name',
+    description: 'Base name for downloaded STL/3MF files. Leave blank to use the auto-generated name',
     defaultValue: '',
-    unit: '.stl',
     placeholder: (form) => getDefaultFileName(form)
   }
 };
