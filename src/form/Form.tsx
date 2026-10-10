@@ -30,6 +30,7 @@ export const Form = ({ schema, object, onChange }: Props) => {
     const config = formConfig[key];
     const value = object[key as unknown as FormPropName];
     const onChangeValue = <T extends unknown>(v: T) => onChange({ ...object, [key]: v });
+    const onReset = () => onChangeValue(config.defaultValue);
 
     if (!isFieldActive(key, object)) return null;
 
@@ -45,6 +46,7 @@ export const Form = ({ schema, object, onChange }: Props) => {
         max={max}
         placeholder={placeholder}
         onChange={onChangeValue}
+        onReset={onReset}
       />
     );
   };
